@@ -3,7 +3,7 @@ package de.donmatheo.game;
 import com.badlogic.gdx.math.Circle;
 
 /**
- * Created by Fireball on 18.10.2014.
+ * Created by donmatheo on 18.10.2014.
  */
 public class Dot extends Circle {
 
