@@ -1,11 +1,13 @@
-language: erlang
+language: java
 
 branches:
   only:
     - master
 
+before_install:
+- chmod +x gradlew
+
 before_script:
-   - chmod +x gradlew
    - wget http://google-web-toolkit.googlecode.com/files/gwt-2.5.1.zip -O /tmp/gwt-2.5.1.zip
    - unzip -qq /tmp/gwt-2.5.1.zip
    - export GWT_HOME=$PWD/gwt-2.5.1/
