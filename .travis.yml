@@ -8,7 +8,7 @@ branches:
     - master
 
 before_script:
- - chmod +x gradlew
+ - chmod +x unstable-relations/gradlew
 
 script: ./gradlew html:dist
 
