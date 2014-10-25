@@ -1,4 +1,9 @@
-language: java
+language: android
+
+android:
+  components:
+    - platform-tools
+    - tools
 
 branches:
   only:
