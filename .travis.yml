@@ -1,7 +1,4 @@
-language: java
-
-jdk:
- - oraclejdk7
+language: erlang
 
 branches:
   only:
@@ -18,10 +15,3 @@ deploy:
   skip_cleanup: true
   app_dir: foo # defaults to $TRAVIS_BUILD_DIR
   edge: true
-
-notifications:
-    recipients:
-      - games@donmatheo.de
-    email:
-      on_success: change
-      on_failure: always
