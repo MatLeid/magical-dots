@@ -16,7 +16,7 @@ before_install:
 
 
 
-script: ./gradlew html:dist --stacktrace
+script: ./gradlew html:dist --info
 
 deploy:
   provider: gae
