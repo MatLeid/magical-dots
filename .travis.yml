@@ -8,10 +8,7 @@ branches:
     - master
 
 before_script:
- - chmod +x grailsw
-
-script: ./grailsw refresh-dependencies
-  && ./grailsw "test-app -integration"
+ - chmod +x gradlew
 
 deploy:
   provider: gae
