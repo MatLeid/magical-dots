@@ -4,6 +4,7 @@ android:
   components:
     - platform-tools
     - tools
+    - oraclejdk7
 
 branches:
   only:
