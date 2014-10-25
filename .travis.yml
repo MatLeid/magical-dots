@@ -10,13 +10,9 @@ branches:
     - master
 
 before_install:
-    - echo $JAVA_HOME
     - chmod +x gradlew
 
-
-
-
-script: ./gradlew html:dist --info
+script: ./gradlew html:superDev
 
 deploy:
   provider: gae
