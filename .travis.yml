@@ -10,8 +10,9 @@ branches:
     - master
 
 before_install:
-    - sudo apt-get install openjdk-7
+    - echo $JAVA_HOME
     - chmod +x gradlew
+
 
 before_script:
     - wget http://google-web-toolkit.googlecode.com/files/gwt-2.5.1.zip -O /tmp/gwt-2.5.1.zip
