@@ -21,5 +21,5 @@ after_script:
     - cp -r ../unstable-relations/html/build/dist gh-pages/app
     - cd gh-pages
     - git add app
-    - git commit -a -m 'Committed by Travis-CI build number: $TRAVIS_JOB_ID' --author='Travis CI <travis@donmatheo.de>'
+    - git commit -a -m 'Committed by Travis-CI build' --author='Travis CI <travis@donmatheo.de>'
     - git push origin gh-pages
