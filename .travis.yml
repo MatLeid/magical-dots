@@ -14,7 +14,7 @@ before_install:
 
 script: ./gradlew html:dist
 
-before_deploy:
+after_script:
     - mkdir ../pages
     - cd ../pages
     - git clone -b gh-pages --single-branch https://github.com/donmatheo/unstable-relations.git gh-pages
