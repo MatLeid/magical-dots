@@ -19,8 +19,6 @@ before_deploy:
     - cd ../pages
     - git clone -b gh-pages --single-branch https://github.com/donmatheo/unstable-relations.git gh-pages
     - cd gh-pages
-
-deploy:
     - cp ../../unstable-relations/html/dist app/
     - git add app
     
