@@ -15,6 +15,3 @@ before_install:
     - git config --global user.name "Travis CI"
 
 script: ./gradlew html:dist
-
-after_success:
-  "curl --ftp-create-dirs -T html/build/dist/* -u $FTP_USER:$FTP_PASSWORD ftp://unstable-relations.donmatheo.de/"
