@@ -12,7 +12,7 @@ branches:
 before_install:
     - chmod +x gradlew
 
-script: ./gradlew clean
+script: ./gradlew html:dist
 
 deploy:
   provider: gae
