@@ -13,13 +13,14 @@ before_install:
     - chmod +x gradlew
     - git config --global user.email "ci@donmatheo.de"
     - git config --global user.name "Travis CI"
-    - ssh-add .travis/id_rsa.enc
 
 script: ./gradlew html:dist
 
 after_script:
-    - mkdir ../pages
-    - cd ../pages
+    - cd ~
+    - ssh-add .travis/id_rsa.enc
+    - mkdir pages
+    - cd pages
     - git clone -b gh-pages --single-branch https://github.com/donmatheo/unstable-relations.git gh-pages
     - cp -r ../unstable-relations/html/build/dist gh-pages/app
     - cd gh-pages
