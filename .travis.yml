@@ -19,7 +19,7 @@ after_script:
     - cd ../pages
     - git clone -b gh-pages --single-branch https://github.com/donmatheo/unstable-relations.git gh-pages
     - cp -r ../unstable-relations/html/build/dist gh-pages/app
-    - cd pages/gh-pages
+    - cd gh-pages
     - git add app
     - git commit -a -m 'Committed by Travis-CI build number: $TRAVIS_JOB_ID' --author='Travis CI <travis@donmatheo.de>'
     - git push origin gh-pages
