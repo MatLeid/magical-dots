@@ -21,4 +21,5 @@ before_deploy:
     - cd gh-pages
     - cp ../../unstable-relations/html/dist app/
     - git add app
-    
+    - git commit -a -m 'update pages'
+    - git push
