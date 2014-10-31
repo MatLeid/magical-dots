@@ -9,6 +9,8 @@ import com.badlogic.gdx.math.Vector2;
  */
 public class Dot extends Circle {
 
+    public static int DEFAULTRADIUS = 35;
+
     private Dot relation1;
     private Dot relation2;
 
@@ -50,7 +52,7 @@ public class Dot extends Circle {
     }
 
     public Dot() {
-        super.radius = 35;
+        super.radius = DEFAULTRADIUS;
     }
 
 

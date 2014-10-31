@@ -10,13 +10,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Random;
 
 public class UnstableRelations extends ApplicationAdapter {
     private ShapeRenderer shapeRenderer;
     private Vector3 touchPos;
     private OrthographicCamera camera;
-    private Vector2 initialDotDimensions;
 
     private Array<Dot> dots = new Array<Dot>();
     private Color yellow = new Color(157, 162, 0, 255);
@@ -63,7 +65,6 @@ public class UnstableRelations extends ApplicationAdapter {
             dot.x = dot.radius + random.nextInt((int) (camera.viewportWidth - 2 * dot.radius));
             dot.y = dot.radius + random.nextInt((int) (camera.viewportHeight - 2 * dot.radius));
         }
-        initialDotDimensions = calculateDotsDimension();
     }
 
     @Override
@@ -93,7 +94,60 @@ public class UnstableRelations extends ApplicationAdapter {
                 }
             }
         }
-        autoscale();
+
+        // begin autozoom
+        // default zoom is positive (=zoom in)
+        int zoomstate = 1;
+        // calculate scaled radius (dots get smaller when zoomed out)
+        float scaledDotRadius = Dot.DEFAULTRADIUS / zoom;
+
+        // check if any dot leaves inner boundary
+        // define inner boundary (rectangle with 2 * scaled dotradius distance to border) (y is pointing down!)
+        Vector3 innerLowerLeft = camera.unproject(new Vector3(scaledDotRadius * 2,camera.viewportHeight - scaledDotRadius * 2, 0));
+        Vector3 innerUpperRight = camera.unproject(new Vector3(camera.viewportWidth -scaledDotRadius * 2, scaledDotRadius * 2,0));
+
+        for(Dot dot: dots) {
+            float[] distances = new float[4];
+            distances[0] = dot.x - innerLowerLeft.x;
+            distances[1] = innerUpperRight.x - dot.x;
+            distances[2] = dot.y - innerLowerLeft.y;
+            distances[3] = innerUpperRight.y - dot.y;
+            Arrays.sort(distances);
+            // zoom out
+            if (distances[0] < 0) {
+                zoomstate = 0;
+                break;
+            }
+        }
+
+        // check if any dot goes out of outer boundary
+        // define outer boundary (rectangle with 1 * scaled dotradius distance to border) (y is pointing down!)
+        Vector3 outerLowerLeft = camera.unproject(new Vector3(scaledDotRadius,camera.viewportHeight - scaledDotRadius, 0));
+        Vector3 outerUpperRight = camera.unproject(new Vector3(camera.viewportWidth - scaledDotRadius,scaledDotRadius,0));
+
+        for(Dot dot: dots) {
+            float[] distances = new float[4];
+            distances[0] = dot.x - outerLowerLeft.x;
+            distances[1] = outerUpperRight.x - dot.x;
+            distances[2] = dot.y - outerLowerLeft.y;
+            distances[3] = outerUpperRight.y - dot.y;
+            Arrays.sort(distances);
+            // zoom out
+            if (distances[0] < 0) {
+                zoomstate = -1;
+                break;
+            }
+        }
+
+        // increment zoom according to state
+        if (zoomstate < 0) {
+            zoom += 0.015;
+        }
+        if (zoomstate > 0) {
+            zoom -= 0.015;
+        }
+        // end of autozoom
+
         camera.zoom = zoom;
         camera.update();
 
@@ -105,69 +159,23 @@ public class UnstableRelations extends ApplicationAdapter {
 
         shapeRenderer.setColor(yellow);
         for (Dot dot : dots) {
-
             if (dot.hasIsoscelesRelations()) {
                 shapeRenderer.rectLine(dot.x, dot.y, dot.getRelation1().x, dot.getRelation1().y, 5);
                 shapeRenderer.rectLine(dot.x, dot.y, dot.getRelation2().x, dot.getRelation2().y, 5);
                 shapeRenderer.circle(dot.x, dot.y, dot.radius + 4);
             }
-
         }
 
         shapeRenderer.setColor(blue);
         for (int i = 0; i < dots.size; i++) {
             Dot dot = dots.get(i);
-
             if (selectedDot == i && !dot.hasIsoscelesRelations()) {
                 shapeRenderer.rectLine(dot.x, dot.y, dot.getRelation1().x, dot.getRelation1().y, 3);
                 shapeRenderer.rectLine(dot.x, dot.y, dot.getRelation2().x, dot.getRelation2().y, 3);
             }
-
             shapeRenderer.circle(dot.x, dot.y, dot.radius);
         }
         shapeRenderer.end();
-    }
-
-    public void autoscale() {
-        float zoomX = 1.0f / initialDotDimensions.x * calculateDotsDimension().x;
-        float zoomY = 1.0f / initialDotDimensions.y * calculateDotsDimension().y;
-
-        if (zoomX > zoomY) {
-            zoom = zoomX;
-        } else {
-            zoom = zoomY;
-        }
-        if (zoom > 3) {
-            zoom = 3;
-        }
-        if (zoom < 0.5) {
-            zoom = 0.5f;
-        }
-
-    }
-
-    public Vector2 calculateDotsDimension() {
-        float minX = camera.viewportWidth;
-        float maxX = 0;
-        for (Dot dot : dots) {
-            if (dot.x < minX) {
-                minX = dot.x;
-            }
-            if (dot.x > maxX) {
-                maxX = dot.x;
-            }
-        }
-        float minY = camera.viewportHeight;
-        float maxY = 0;
-        for (Dot dot : dots) {
-            if (dot.y < minY) {
-                minY = dot.y;
-            }
-            if (dot.y > maxY) {
-                maxY = dot.y;
-            }
-        }
-        return new Vector2(maxX - minX, maxY - minY);
     }
 
     @Override
