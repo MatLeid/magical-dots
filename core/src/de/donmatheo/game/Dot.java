@@ -1,8 +1,6 @@
 package de.donmatheo.game;
 
 import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 
 /**
  * Created by donmatheo on 18.10.2014.
@@ -30,25 +28,20 @@ public class Dot extends Circle {
         this.relation2 = relation2;
     }
 
-    private double distance(Dot neighbour)
-    {
-        double dx   = x - neighbour.x;         //horizontal difference
-        double dy   = y - neighbour.y;         //vertical difference
-        double dist = Math.sqrt( dx * dx + dy * dy ); //distance using Pythagoras theorem
-        return dist;
+    private double distance(Dot neighbour) {
+        double dx = x - neighbour.x;         //horizontal difference
+        double dy = y - neighbour.y;         //vertical difference
+        return Math.sqrt(dx * dx + dy * dy); //distance using Pythagoras theorem
     }
 
-    public boolean hasIsoscelesRelations(){
+    public boolean hasIsoscelesRelations() {
         double dist1 = distance(relation1);
         double dist2 = distance(relation2);
 
-       double median = (dist1 + dist2) / 2;
-       double absoluteDiff = Math.abs(dist1 - dist2);
+        double median = (dist1 + dist2) / 2;
+        double absoluteDiff = Math.abs(dist1 - dist2);
 
-        if (absoluteDiff / median < 0.1)
-            return true;
-
-        return false;
+        return (absoluteDiff / median < 0.1);
     }
 
     public Dot() {
