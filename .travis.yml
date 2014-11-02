@@ -4,6 +4,7 @@ android:
   components:
     - platform-tools
     - tools
+    - build-tools-21.0.0
     - android-21
 
 branches:
