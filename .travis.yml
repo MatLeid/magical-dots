@@ -20,18 +20,15 @@ before_install:
 script: ./gradlew build
 
 after_failure:
-    - ls
     - cd ..
-    - ls
     - git clone -b gh-pages --single-branch https://github.com/donmatheo/unstable-relations.git gh-pages
     - cd gh-pages
     - cp -r ../unstable-relations/core/build/reports/tests/ tests
     - git add tests
 
 after_success:
-    - ls
+    - ls -LR
     - cd ..
-    - ls
     - git clone -b gh-pages --single-branch https://github.com/donmatheo/unstable-relations.git gh-pages
     - cd gh-pages
     - mv latest_build gh-pages/archive/build_$((TRAVIS_JOB_ID - 2))
