@@ -32,8 +32,8 @@ after_success:
     - cd ..
     - git clone -b gh-pages --single-branch https://github.com/donmatheo/unstable-relations.git gh-pages
     - cd gh-pages
-    - mv latest_build gh-pages/archive/build_$((TRAVIS_JOB_ID - 2))
-    - cp -r ../unstable-relations/html/build/dist latest_build
+    - mv latest_build archive/build_$((TRAVIS_JOB_ID - 2))
+    - cp -r ../unstable-relations/html/build/dist/ latest_build
     - echo "$((TRAVIS_JOB_ID - 1))" >> latest_build/version.txt
     - git add latest_build
     - git add archive
