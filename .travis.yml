@@ -20,19 +20,25 @@ before_install:
 script: ./gradlew build
 
 after_failure:
+    - ls
     - cd ..
+    - ls
     - git clone -b gh-pages --single-branch https://github.com/donmatheo/unstable-relations.git gh-pages
-    - cp -r unstable-relations/core/build/reports/tests/ gh-pages/tests
-    - git add gh-pages/tests
+    - cd gh-pages
+    - cp -r ../unstable-relations/core/build/reports/tests/ tests
+    - git add tests
 
 after_success:
+    - ls
     - cd ..
+    - ls
     - git clone -b gh-pages --single-branch https://github.com/donmatheo/unstable-relations.git gh-pages
-    - mv gh-pages/latest_build gh-pages/archive/build_$((TRAVIS_JOB_ID - 2))
-    - cp -r unstable-relations/html/build/dist gh-pages/latest_build
-    - echo "$((TRAVIS_JOB_ID - 1))" >> gh-pages/latest_build/version.txt
-    - git add gh-pages/latest_build
-    - git add gh-pages/archive
+    - cd gh-pages
+    - mv latest_build gh-pages/archive/build_$((TRAVIS_JOB_ID - 2))
+    - cp -r ../unstable-relations/html/build/dist latest_build
+    - echo "$((TRAVIS_JOB_ID - 1))" >> latest_build/version.txt
+    - git add latest_build
+    - git add archive
 
 after_script:
     - git commit -a -m "Committed by Travis-CI (build number - $((TRAVIS_JOB_ID - 1)))"
