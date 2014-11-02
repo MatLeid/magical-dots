@@ -43,12 +43,8 @@ public class DotController {
     }
 
     private boolean dotIntersectingOtherDots(Dot standalone) {
-//        for(int i = dots.indexOf(standalone, true) - 1; i > -1; i--){
-//            if(standalone.overlaps(dots.get(i)))
-//                return true;
-//        }
-        for (int i = 0; i < dots.size; i++){
-            if (dots.get(i) != standalone && dots.get(i).overlaps(standalone))
+        for(int i = dots.indexOf(standalone, true) - 1; i > -1; i--){
+            if(standalone.overlaps(dots.get(i)))
                 return true;
         }
         return false;
