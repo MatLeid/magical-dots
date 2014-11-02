@@ -81,7 +81,6 @@ project(":html") {
     apply plugin: "gwt"
     apply plugin: "war"
 
-
     dependencies {
         compile project(":core")
         compile "com.badlogicgames.gdx:gdx-backend-gwt:$gdxVersion"
@@ -95,10 +94,10 @@ project(":html") {
 project(":core") {
     apply plugin: "java"
 
-
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
+        testCompile "junit:junit:4.11"
     }
 }
 

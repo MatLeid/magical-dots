@@ -10,13 +10,13 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.Arrays;
-import java.util.Random;
 
 public class UnstableRelations extends ApplicationAdapter {
     private ShapeRenderer shapeRenderer;
     private Vector3 touchPos;
     private OrthographicCamera camera;
 
+    private DotController dotController = new DotController();
     private Array<Dot> dots = new Array<Dot>();
     private Color yellow = new Color(157, 162, 0, 255);
     private Color blue = new Color(0, 162, 232, 255);
@@ -36,32 +36,11 @@ public class UnstableRelations extends ApplicationAdapter {
         camera.setToOrtho(false, screen_width, screen_height);
         touchPos = new Vector3();
         shapeRenderer = new ShapeRenderer();
-        Random random = new Random();
 
-        // create list of dots
-        int numberOfDots = 5;
-        for (int i = 0; i < numberOfDots; i++) {
-            dots.add(new Dot());
-        }
-        // add random relations
-        for (int i = 0; i < dots.size; i++) {
-            int number1 = i;
-            int number2 = i;
-            while (number1 == i) {
-                number1 = random.nextInt(dots.size);
-            }
-            while (number2 == i || number2 == number1) {
-                number2 = random.nextInt(dots.size);
-            }
-            dots.get(i).setRelation1(dots.get(number1));
-            dots.get(i).setRelation2(dots.get(number2));
-        }
+        dots = dotController.createDots(5);
+        dotController.setRandomRelations();
+        dotController.setRandomLayout(camera.viewportWidth, camera.viewportHeight);
 
-        // random layout of dots
-        for (Dot dot : dots) {
-            dot.x = dot.radius + random.nextInt((int) (camera.viewportWidth - 2 * dot.radius));
-            dot.y = dot.radius + random.nextInt((int) (camera.viewportHeight - 2 * dot.radius));
-        }
     }
 
     @Override

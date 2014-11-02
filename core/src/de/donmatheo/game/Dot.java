@@ -12,9 +12,7 @@ public class Dot extends Circle {
     private Dot relation1;
     private Dot relation2;
 
-    public Dot getRelation1() {
-        return relation1;
-    }
+    public Dot getRelation1() { return relation1; }
 
     public void setRelation1(Dot relation1) {
         this.relation1 = relation1;
