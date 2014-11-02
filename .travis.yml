@@ -17,19 +17,21 @@ before_install:
     - git config --global user.name "Travis CI"
     - git config --global push.default simple
 
-script: ./gradlew build
+script: ./gradlew html:dist
+
+after_failure:
+    - git clone -b gh-pages --single-branch https://github.com/donmatheo/unstable-relations.git gh-pages
+    - cp -r unstable-relations/core/build/reports/tests/ gh-pages/tests
+    - git add gh-pages/tests
 
 after_success:
-    - mkdir ../pages
-    - cd ../pages
     - git clone -b gh-pages --single-branch https://github.com/donmatheo/unstable-relations.git gh-pages
     - mv gh-pages/latest_build gh-pages/archive/build_$((TRAVIS_JOB_ID - 2))
-    - cp -r ../unstable-relations/html/build/dist gh-pages/latest_build
-    - cp -r ../core/build/reports/tests/ gh-pages/tests
-    - cd gh-pages
-    - echo "$((TRAVIS_JOB_ID - 1))" >> latest_build/version.txt
-    - git add tests
-    - git add latest_build
-    - git add archive
+    - cp -r unstable-relations/html/build/dist gh-pages/latest_build
+    - echo "$((TRAVIS_JOB_ID - 1))" >> gh-pages/latest_build/version.txt
+    - git add gh-pages/latest_build
+    - git add gh-pages/archive
+
+after_script:
     - git commit -a -m "Committed by Travis-CI (build number - $((TRAVIS_JOB_ID - 1)))"
     - git push -q https://$token@github.com/donmatheo/unstable-relations.git HEAD:gh-pages
