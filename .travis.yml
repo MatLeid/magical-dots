@@ -17,7 +17,10 @@ before_install:
     - git config --global user.name "Travis CI"
     - git config --global push.default simple
 
-script: ./gradlew build
+script:
+    - ./gradlew build
+    - ./gradlew html:dist
+
 
 after_failure:
     - cd ..
