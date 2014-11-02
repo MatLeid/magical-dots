@@ -28,7 +28,6 @@ after_failure:
     - git add tests
 
 after_success:
-    - ls -LR
     - cd ..
     - git clone -b gh-pages --single-branch https://github.com/donmatheo/unstable-relations.git gh-pages
     - cd gh-pages
