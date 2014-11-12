@@ -117,10 +117,10 @@ public class UnstableRelations extends ApplicationAdapter {
 
         // increment zoom according to state
         if (zoomstate < 0) {
-            zoom += Gdx.graphics.getDeltaTime()* 1.2;
+            zoom += Gdx.graphics.getDeltaTime()* 1.05;
         }
         if (zoomstate > 0) {
-            zoom -= Gdx.graphics.getDeltaTime()* 1.2;
+            zoom -= Gdx.graphics.getDeltaTime()* 1.05;
         }
         // end of autozoom
 
