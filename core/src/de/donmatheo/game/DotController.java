@@ -1,5 +1,6 @@
 package de.donmatheo.game;
 
+import box2dLight.RayHandler;
 import com.badlogic.gdx.utils.Array;
 import java.util.Random;
 
@@ -11,9 +12,9 @@ public class DotController {
     private Array<Dot> dots = new Array<Dot>();
     private Random random = new Random();
 
-    public Array<Dot> createDots(int numberOfDots) {
+    public Array<Dot> createDots(int numberOfDots, RayHandler rayHandler) {
         for (int i = 0; i < numberOfDots; i++) {
-            dots.add(new Dot());
+            dots.add(new Dot(rayHandler));
         }
         return dots;
     }
@@ -38,6 +39,7 @@ public class DotController {
             do {
                 dot.x = dot.radius + random.nextInt((int) (width - 2 * dot.radius));
                 dot.y = dot.radius + random.nextInt((int) (height - 2 * dot.radius));
+                dot.getPointLight().setPosition(dot.x, dot.y);
             } while(dotIntersectingOtherDots(dot));
         }
     }

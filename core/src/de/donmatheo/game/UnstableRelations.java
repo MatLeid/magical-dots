@@ -1,12 +1,16 @@
 package de.donmatheo.game;
 
+import box2dLight.PointLight;
+import box2dLight.RayHandler;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.Arrays;
@@ -18,13 +22,18 @@ public class UnstableRelations extends ApplicationAdapter {
 
     private DotController dotController = new DotController();
     private Array<Dot> dots = new Array<Dot>();
-    private Color yellow = new Color(157, 162, 0, 255);
-    private Color blue = new Color(0, 162, 232, 255);
+    private Color yellow = parseColor("FFF675", 1);
+    private Color blue = parseColor("7CD4FF",1);
+    private Color purple = parseColor("D6147E", 1);
 
     private int selectedDot = -1;
     private float offsetX;
     private float offsetY;
     private float zoom = 1.0f;
+
+    World world;
+
+    RayHandler handler;
 
     @Override
     public void create() {
@@ -37,10 +46,14 @@ public class UnstableRelations extends ApplicationAdapter {
         touchPos = new Vector3();
         shapeRenderer = new ShapeRenderer();
 
-        dots = dotController.createDots(5);
+        world = new World(new Vector2(0, -9.8f), false);
+        handler = new RayHandler(world);
+        handler.setCombinedMatrix(camera.combined);
+        handler.setAmbientLight(purple);
+
+        dots = dotController.createDots(5, handler);
         dotController.setRandomRelations();
         dotController.setRandomLayout(camera.viewportWidth, camera.viewportHeight);
-
     }
 
     @Override
@@ -67,6 +80,7 @@ public class UnstableRelations extends ApplicationAdapter {
                 if (selectedDot == i) {
                     dot.x = touchPos.x - offsetX;
                     dot.y = touchPos.y - offsetY;
+                    dot.getPointLight().setPosition(dot.x, dot.y);
                 }
             }
         }
@@ -128,8 +142,11 @@ public class UnstableRelations extends ApplicationAdapter {
         camera.update();
 
         // render all dots
-        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        handler.updateAndRender();
+
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
@@ -152,12 +169,27 @@ public class UnstableRelations extends ApplicationAdapter {
             shapeRenderer.circle(dot.x, dot.y, dot.radius);
         }
         shapeRenderer.end();
+
+
     }
 
     @Override
     public void dispose() {
         shapeRenderer.dispose();
+        handler.dispose();
     }
 
+    public static Color parseColor(String hex, float alpha) {
+        String s1 = hex.substring(0, 2);
+        int v1 = Integer.parseInt(s1, 16);
+        float f1 = (float) v1 / 255f;
+        String s2 = hex.substring(2, 4);
+        int v2 = Integer.parseInt(s2, 16);
+        float f2 = (float) v2 / 255f;
+        String s3 = hex.substring(4, 6);
+        int v3 = Integer.parseInt(s3, 16);
+        float f3 = (float) v3 / 255f;
+        return new Color(f1, f2, f3, alpha);
+    }
 
 }
