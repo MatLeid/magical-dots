@@ -23,7 +23,8 @@ public class UnstableRelations extends ApplicationAdapter {
     private DotController dotController = new DotController();
     private Array<Dot> dots = new Array<Dot>();
     private Color yellow = parseColor("FFF675", 1);
-    private Color blue = parseColor("7CD4FF",1);
+    private Color blue = parseColor("14D6D6",1);
+    private Color lightblue = parseColor("BAFFFF",1);
     private Color purple = parseColor("D6147E", 1);
 
     private int selectedDot = -1;
@@ -131,10 +132,10 @@ public class UnstableRelations extends ApplicationAdapter {
 
         // increment zoom according to state
         if (zoomstate < 0) {
-            zoom += 0.015;
+            zoom += Gdx.graphics.getDeltaTime()* 1.05;
         }
         if (zoomstate > 0) {
-            zoom -= 0.015;
+            zoom -= Gdx.graphics.getDeltaTime()* 1.05;
         }
         // end of autozoom
 
@@ -145,6 +146,7 @@ public class UnstableRelations extends ApplicationAdapter {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        handler.setCombinedMatrix(camera.combined);
         handler.updateAndRender();
 
         shapeRenderer.setProjectionMatrix(camera.combined);
@@ -159,12 +161,16 @@ public class UnstableRelations extends ApplicationAdapter {
             }
         }
 
-        shapeRenderer.setColor(blue);
+
         for (int i = 0; i < dots.size; i++) {
+            shapeRenderer.setColor(blue);
             Dot dot = dots.get(i);
             if (selectedDot == i && !dot.hasIsoscelesRelations()) {
                 shapeRenderer.rectLine(dot.x, dot.y, dot.getRelation1().x, dot.getRelation1().y, 3);
                 shapeRenderer.rectLine(dot.x, dot.y, dot.getRelation2().x, dot.getRelation2().y, 3);
+            }
+            if (dot.hasIsoscelesRelations()) {
+                shapeRenderer.setColor(lightblue);
             }
             shapeRenderer.circle(dot.x, dot.y, dot.radius);
         }

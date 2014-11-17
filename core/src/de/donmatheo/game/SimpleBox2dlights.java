@@ -128,7 +128,6 @@ public class SimpleBox2dlights implements ApplicationListener {
     @Override
     public void dispose() {
         world.dispose();
-        handler.dispose();
     }
 
     public static Color parseColor(String hex) {
