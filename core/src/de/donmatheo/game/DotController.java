@@ -1,6 +1,7 @@
 package de.donmatheo.game;
 
 import box2dLight.RayHandler;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import java.util.Random;
 
@@ -12,9 +13,11 @@ public class DotController {
     private Array<Dot> dots = new Array<Dot>();
     private Random random = new Random();
 
-    public Array<Dot> createDots(int numberOfDots, RayHandler rayHandler) {
+    public Array<Dot> createDots(int numberOfDots, RayHandler rayHandler, Stage stage) {
         for (int i = 0; i < numberOfDots; i++) {
-            dots.add(new Dot(rayHandler));
+            Dot dot = new Dot(rayHandler);
+            dots.add(dot);
+            stage.addActor(dot);
         }
         return dots;
     }
@@ -37,17 +40,17 @@ public class DotController {
     public void setRandomLayout(float width, float height) {
         for (Dot dot : dots) {
             do {
-                dot.x = dot.radius + random.nextInt((int) (width - 2 * dot.radius));
-                dot.y = dot.radius + random.nextInt((int) (height - 2 * dot.radius));
-                dot.getPointLight().setPosition(dot.x, dot.y);
+                dot.setX( Dot.DEFAULTRADIUS + random.nextInt((int) (width - 2 * Dot.DEFAULTRADIUS)));
+                dot.setY(Dot.DEFAULTRADIUS + random.nextInt((int) (height - 2 * Dot.DEFAULTRADIUS)));
+                dot.getPointLight().setPosition(dot.getX(), dot.getY());
             } while(dotIntersectingOtherDots(dot));
         }
     }
 
     private boolean dotIntersectingOtherDots(Dot standalone) {
         for(int i = dots.indexOf(standalone, true) - 1; i > -1; i--){
-            if(standalone.overlaps(dots.get(i)))
-                return true;
+            //if(standalone.overlaps(dots.get(i)))
+              //  return true;
         }
         return false;
     }

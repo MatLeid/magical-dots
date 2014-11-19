@@ -9,7 +9,7 @@ android:
 
 branches:
   only:
-    - master
+    - scene2d
 
 before_install:
     - chmod +x gradlew
@@ -31,10 +31,10 @@ after_success:
     - cd ..
     - git clone -b gh-pages --single-branch https://github.com/donmatheo/unstable-relations.git gh-pages
     - cd gh-pages
-    - mv master archive/master_$((TRAVIS_JOB_ID - 2))
-    - cp -r ../unstable-relations/html/build/dist/ master
-    - echo "$((TRAVIS_JOB_ID - 1))" >> master/version.txt
-    - git add master
+    - mv scene2d archive/scene2d_$((TRAVIS_JOB_ID - 2))
+    - cp -r ../unstable-relations/html/build/dist/ scene2d
+    - echo "$((TRAVIS_JOB_ID - 1))" >> scene2d/version.txt
+    - git add scene2d
     - git add archive
 
 after_script:
