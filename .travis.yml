@@ -33,7 +33,7 @@ after_success:
     - cd gh-pages
     - mv $TRAVIS_BRANCH archive/$TRAVIS_BRANCH_$((TRAVIS_BUILD_NUMBER - 1))
     - cp -r ../unstable-relations/html/build/dist/ $TRAVIS_BRANCH
-    - echo "$((TRAVIS_JOB_ID - 1))" >> $TRAVIS_BRANCH/version.txt
+    - echo "$((TRAVIS_BUILD_NUMBER))" >> $TRAVIS_BRANCH/version.txt
     - git add $TRAVIS_BRANCH
     - git add archive
 
