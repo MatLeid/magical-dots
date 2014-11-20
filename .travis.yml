@@ -9,7 +9,7 @@ android:
 
 branches:
   only:
-    - master
+    - $TRAVIS_BRANCH
 
 before_install:
     - chmod +x gradlew
@@ -31,13 +31,13 @@ after_success:
     - cd ..
     - git clone -b gh-pages --single-branch https://github.com/donmatheo/unstable-relations.git gh-pages
     - cd gh-pages
-    - mv master archive/master_$((TRAVIS_JOB_ID - 2))
-    - cp -r ../unstable-relations/html/build/dist/ master
-    - echo "$((TRAVIS_JOB_ID - 1))" >> master/version.txt
-    - git add master
+    - mv $TRAVIS_BRANCH archive/$TRAVIS_BRANCH_$((TRAVIS_BUILD_NUMBER - 1))
+    - cp -r ../unstable-relations/html/build/dist/ $TRAVIS_BRANCH
+    - echo "$((TRAVIS_JOB_ID - 1))" >> $TRAVIS_BRANCH/version.txt
+    - git add $TRAVIS_BRANCH
     - git add archive
 
 after_script:
-    - git commit -a -m "Committed by Travis-CI (build number - $((TRAVIS_JOB_ID - 1)))"
+    - git commit -a -m "Committed by Travis-CI (build number - $((TRAVIS_BUILD_NUMBER)))"
     - git pull
     - git push -q https://$token@github.com/donmatheo/unstable-relations.git HEAD:gh-pages
