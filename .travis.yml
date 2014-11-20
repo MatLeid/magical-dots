@@ -27,10 +27,10 @@ after_success:
     - cd ..
     - git clone -b gh-pages --single-branch https://github.com/donmatheo/unstable-relations.git gh-pages
     - cd gh-pages
-    - mv $TRAVIS_BRANCH archive/$TRAVIS_BRANCH_$((TRAVIS_BUILD_NUMBER - 1))
-    - cp -r ../unstable-relations/html/build/dist/ $TRAVIS_BRANCH
-    - echo "$((TRAVIS_BUILD_NUMBER))" >> $TRAVIS_BRANCH/version.txt
-    - git add $TRAVIS_BRANCH
+    - mv $(TRAVIS_BRANCH) archive/$(TRAVIS_BRANCH)_$((TRAVIS_BUILD_NUMBER - 1))
+    - cp -r ../unstable-relations/html/build/dist/ $(TRAVIS_BRANCH)
+    - echo "$((TRAVIS_BUILD_NUMBER))" >> $(TRAVIS_BRANCH)/version.txt
+    - git add $(TRAVIS_BRANCH)
     - git add archive
 
 after_script:
