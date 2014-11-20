@@ -7,10 +7,6 @@ android:
     - build-tools-21.0.0
     - android-21
 
-branches:
-  only:
-    - $(TRAVIS_BRANCH)
-
 before_install:
     - chmod +x gradlew
     - git config --global user.email "ci@donmatheo.de"
