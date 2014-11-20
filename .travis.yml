@@ -9,7 +9,7 @@ android:
 
 branches:
   only:
-    - $TRAVIS_BRANCH
+    - $(TRAVIS_BRANCH)
 
 before_install:
     - chmod +x gradlew
