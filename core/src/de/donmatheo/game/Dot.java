@@ -32,6 +32,19 @@ public class Dot extends Actor {
         pointLight.setActive(false);
         renderer = new ShapeRenderer();
 
+
+        setBounds(0, 0, DEFAULTRADIUS, DEFAULTRADIUS);
+        addListener(new InputListener() {
+            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
+                System.out.println("down " + x +  ", " + y);
+                return true;
+            }
+
+            public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
+                System.out.println("up " + x +  ", " + y);
+            }
+        });
+
     }
 
     public void draw(Batch batch, float parentAlpha) {
