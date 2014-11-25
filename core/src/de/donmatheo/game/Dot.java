@@ -33,7 +33,7 @@ public class Dot extends Actor {
         renderer = new ShapeRenderer();
 
 
-        setBounds(0, 0, DEFAULTRADIUS, DEFAULTRADIUS);
+        setBounds(0, 0, DEFAULTRADIUS*2, DEFAULTRADIUS*2);
         addListener(new InputListener() {
             public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
                 System.out.println("down " + x +  ", " + y);

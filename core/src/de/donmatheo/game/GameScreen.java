@@ -125,11 +125,13 @@ public class GameScreen implements Screen {
         // render all dots
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.act(delta);
-        stage.draw();
 
         lighting.setCombinedMatrix(camera.combined);
         lighting.updateAndRender();
+
+        stage.act(delta);
+        stage.draw();
+
 
 
     }
