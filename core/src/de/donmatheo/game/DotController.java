@@ -40,9 +40,9 @@ public class DotController {
     public void setRandomLayout(float width, float height) {
         for (Dot dot : dots) {
             do {
-                dot.setX( Dot.DEFAULTRADIUS + random.nextInt((int) (width - 2 * Dot.DEFAULTRADIUS)));
-                dot.setY(Dot.DEFAULTRADIUS + random.nextInt((int) (height - 2 * Dot.DEFAULTRADIUS)));
-                dot.getPointLight().setPosition(dot.getX(), dot.getY());
+                float x = Dot.DEFAULTRADIUS + random.nextInt((int) (width - 2 * Dot.DEFAULTRADIUS));
+                float y = Dot.DEFAULTRADIUS + random.nextInt((int) (height - 2 * Dot.DEFAULTRADIUS));
+                dot.updatePosition(x, y);
             } while(dotIntersectingOtherDots(dot));
         }
     }

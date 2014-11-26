@@ -16,7 +16,6 @@ public class Dot extends Actor {
 
     public static int DEFAULTRADIUS = 35;
     private final PointLight pointLight;
-
     private Dot relation1;
     private Dot relation2;
 
@@ -25,23 +24,29 @@ public class Dot extends Actor {
     private Color lightblue = UnstableRelations.parseColor("BAFFFF", 1);
 
     private ShapeRenderer renderer;
-
+    private boolean touched;
+    private float offsetX, offsetY;
 
     public Dot(RayHandler rayHandler) {
         pointLight = new PointLight(rayHandler, 200, Color.ORANGE, 250, getX(), getY());
         pointLight.setActive(false);
         renderer = new ShapeRenderer();
 
-
-        setBounds(0, 0, DEFAULTRADIUS*2, DEFAULTRADIUS*2);
+        setBounds(0, 0, DEFAULTRADIUS * 2, DEFAULTRADIUS * 2);
         addListener(new InputListener() {
-            public boolean touchDown (InputEvent event, float x, float y, int pointer, int button) {
-                System.out.println("down " + x +  ", " + y);
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                offsetX = x;
+                offsetY = y;
+                touched = true;
                 return true;
             }
 
-            public void touchUp (InputEvent event, float x, float y, int pointer, int button) {
-                System.out.println("up " + x +  ", " + y);
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                touched = false;
+            }
+
+            public void touchDragged(InputEvent event, float x, float y, int pointer) {
+                updatePosition(event.getStageX() - offsetX, event.getStageY() - offsetY);
             }
         });
 
@@ -59,13 +64,11 @@ public class Dot extends Actor {
             renderer.circle(getX(), getY(), DEFAULTRADIUS + 4);
         }
 
-
         renderer.setColor(blue);
-
-//        if (selectedDot == i && !dot.hasIsoscelesRelations()) {
-//            renderer.rectLine(dot.x, dot.y, dot.getRelation1().x, dot.getRelation1().y, 3);
-//            renderer.rectLine(dot.x, dot.y, dot.getRelation2().x, dot.getRelation2().y, 3);
-//        }
+        if (isTouched() && !hasIsoscelesRelations()) {
+            renderer.rectLine(getX(), getY(), getRelation1().getX(), getRelation1().getY(), 3);
+            renderer.rectLine(getX(), getY(), getRelation2().getX(), getRelation2().getY(), 3);
+        }
         if (hasIsoscelesRelations()) {
             renderer.setColor(lightblue);
         }
@@ -74,6 +77,14 @@ public class Dot extends Actor {
         batch.begin();
     }
 
+    private boolean isTouched() {
+        return touched;
+    }
+
+    public void updatePosition(float x, float y){
+        setPosition(x, y);
+        pointLight.setPosition(x, y);
+    }
     public Dot getRelation1() {
         return relation1;
     }
@@ -110,10 +121,6 @@ public class Dot extends Actor {
             return false;
         }
 
-    }
-
-    public PointLight getPointLight() {
-        return pointLight;
     }
 
 }
