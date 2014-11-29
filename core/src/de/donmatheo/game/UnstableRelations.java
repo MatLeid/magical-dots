@@ -12,17 +12,20 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 public class UnstableRelations extends Game {
 
     public static final Color PURPLE = UnstableRelations.parseColor("B90091", 1);
+    public static final Color DARKGREY = UnstableRelations.parseColor("202020", 1);
     public static final Color YELLOW = UnstableRelations.parseColor("FFF675", 1);
     public static final Color BLUE = UnstableRelations.parseColor("14D6D6", 1);
     public static final Color LIGHTBLUE = UnstableRelations.parseColor("BAFFFF", 1);
 
 
     public SpriteBatch batch;
-    public BitmapFont font;
+    public BitmapFont mainfont;
+    public BitmapFont titlefont;
 
     public void create() {
         batch = new SpriteBatch();
-        font = new BitmapFont(Gdx.files.internal("myfont.fnt"), Gdx.files.internal("myfont.png"),false);
+        mainfont = new BitmapFont(Gdx.files.internal("mainfont.fnt"), Gdx.files.internal("mainfont.png"),false);
+        titlefont = new BitmapFont(Gdx.files.internal("titlefont.fnt"), Gdx.files.internal("titlefont.png"),false);
         this.setScreen(new MainMenuScreen(this));
     }
 
@@ -32,7 +35,7 @@ public class UnstableRelations extends Game {
 
     public void dispose() {
         batch.dispose();
-        font.dispose();
+        mainfont.dispose();
     }
 
     public static Color parseColor(String hex, float alpha) {

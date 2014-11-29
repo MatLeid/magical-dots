@@ -80,7 +80,7 @@ public class GameScreen implements Screen {
         world = new World(new Vector2(0, -9.8f), false);
         lighting = new RayHandler(world);
         lighting.setCombinedMatrix(camera.combined);
-        lighting.setAmbientLight(UnstableRelations.PURPLE);
+        lighting.setAmbientLight(UnstableRelations.DARKGREY);
 
         // setup dots
         dots = dotController.createDots(5, lighting);
