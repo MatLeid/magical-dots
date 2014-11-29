@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -20,16 +22,11 @@ public class GameScreen implements Screen {
 
     private final UnstableRelations game;
 
-    private ShapeRenderer shapeRenderer;
-    private Vector3 touchPos;
     private OrthographicCamera camera;
 
     private DotController dotController = new DotController();
     private Array<Dot> dots = new Array<Dot>();
 
-    private Color purple = UnstableRelations.parseColor("D6147E", 1);
-
-    private int selectedDot = -1;
     private float offsetX;
     private float offsetY;
     private float zoom = 1.0f;
@@ -41,58 +38,79 @@ public class GameScreen implements Screen {
 
     public GameScreen(final UnstableRelations game) {
         this.game = game;
-        stage = new Stage(new FitViewport(800, 480));
-        Gdx.input.setInputProcessor(stage);
-
-        // setup camera and shapeRenderer
+        // setup camera
         float screen_width = Gdx.graphics.getWidth();
         float screen_height = Gdx.graphics.getHeight();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, screen_width, screen_height);
-        touchPos = new Vector3();
-        shapeRenderer = new ShapeRenderer();
 
+        // setup viewport and stage
+        FitViewport viewport = new FitViewport(800, 480);
+        viewport.setCamera(camera);
+        stage = new Stage(viewport);
+        Gdx.input.setInputProcessor(stage);
+
+        stage.addListener(new InputListener() {
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                Dot touched = (Dot) stage.hit(event.getStageX(), event.getStageY(), true);
+                if (touched != null) {
+                    touched.setTouched(true);
+                    offsetX = x - touched.getX();
+                    offsetY = y - touched.getY();
+                }
+                return true;
+            }
+
+            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                Dot touched = (Dot) stage.hit(event.getStageX(), event.getStageY(), true);
+                if (touched != null) {
+                    touched.setTouched(false);
+                }
+            }
+
+            public void touchDragged(InputEvent event, float x, float y, int pointer) {
+                for (Dot dot: dots) {
+                    if (dot.isTouched())
+                        dot.updatePosition(event.getStageX() - offsetX, event.getStageY() - offsetY);
+                }
+            }
+        });
+
+        // setup lighting
         world = new World(new Vector2(0, -9.8f), false);
         lighting = new RayHandler(world);
         lighting.setCombinedMatrix(camera.combined);
-        lighting.setAmbientLight(purple);
+        lighting.setAmbientLight(UnstableRelations.PURPLE);
 
-        dots = dotController.createDots(5, lighting, stage);
+        // setup dots
+        dots = dotController.createDots(5, lighting);
         dotController.setRandomRelations();
         dotController.setRandomLayout(camera.viewportWidth, camera.viewportHeight);
+        dotController.addAllToStage(stage);
 
     }
 
     @Override
     public void render(float delta) {
+        // set zoom and update camera
+        autozoom();
+        camera.update();
 
-        // release dragged dot
-        if (!Gdx.input.isTouched()) {
-            selectedDot = -1;
-        }
-        // drag touched dot
-        if (Gdx.input.isTouched()) {
+        // render background
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-            touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
-            camera.unproject(touchPos);
+        // render lights
+        lighting.setCombinedMatrix(camera.combined);
+        lighting.updateAndRender();
 
+        // render dots
+        stage.act(delta);
+        stage.draw();
 
-//            for (int i = 0; i < dots.size; i++) {
-//                Dot dot = dots.get(i);
-//                if (dot.contains(touchPos.x, touchPos.y) && selectedDot == -1) {
-//                    selectedDot = i;
-//                    offsetX = touchPos.x - dot.x;
-//                    offsetY = touchPos.y - dot.y;
-//                }
-//                if (selectedDot == i) {
-//                    dot.x = touchPos.x - offsetX;
-//                    dot.y = touchPos.y - offsetY;
-//                    dot.getPointLight().setPosition(dot.x, dot.y);
-//                }
-//            }
-        }
+    }
 
-        // begin autozoom
+    private void autozoom() {
         // default zoom is positive (=zoom in)
         int zoomstate = 1;
         // calculate scaled radius (dots get smaller when zoomed out)
@@ -117,23 +135,7 @@ public class GameScreen implements Screen {
         if (zoomstate > 0) {
             zoom -= Gdx.graphics.getDeltaTime() * 1.05;
         }
-        // end of autozoom
-
         camera.zoom = zoom;
-        camera.update();
-
-        // render all dots
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        lighting.setCombinedMatrix(camera.combined);
-        lighting.updateAndRender();
-
-        stage.act(delta);
-        stage.draw();
-
-
-
     }
 
     @Override
@@ -163,7 +165,6 @@ public class GameScreen implements Screen {
 
     @Override
     public void dispose() {
-        shapeRenderer.dispose();
         lighting.dispose();
         stage.dispose();
     }
