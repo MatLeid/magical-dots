@@ -14,7 +14,7 @@ before_install:
     - git config --global push.default simple
 
 script:
-    - ./gradlew html:dist
+    - ./gradlew html:dist --stacktrace
 
 after_failure:
     - cd ..
