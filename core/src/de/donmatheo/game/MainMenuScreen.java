@@ -4,6 +4,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 
 /**
  * Created by donmatheo on 19.11.2014.
@@ -11,21 +13,27 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 public class MainMenuScreen implements Screen {
 
     final UnstableRelations game;
-
+    private final Stage stage;
     OrthographicCamera camera;
 
     public MainMenuScreen(final UnstableRelations game) {
         this.game = game;
-
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);
+        // setup viewport and stage
+        FitViewport viewport = new FitViewport(800, 480);
+        viewport.setCamera(camera);
+        stage = new Stage(viewport);
+        Gdx.input.setInputProcessor(stage);
 
     }
 
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(UnstableRelations.DARKGREY.r,UnstableRelations.DARKGREY.g,UnstableRelations.DARKGREY.b,1 );
+
+
+        Gdx.gl.glClearColor(UnstableRelations.DARKGREY.r, UnstableRelations.DARKGREY.g, UnstableRelations.DARKGREY.b, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         camera.update();
@@ -33,10 +41,15 @@ public class MainMenuScreen implements Screen {
 
         game.batch.begin();
 
-        game.mainfont.draw(game.batch, "Welcome to", 330, camera.viewportHeight/2 + 110);
-        game.titlefont.draw(game.batch, "Magical Dots",160, camera.viewportHeight/2 + 70);
-        game.mainfont.draw(game.batch, "Tap anywhere to begin!", 270, camera.viewportHeight/2 - 40);
+        game.mainfont.draw(game.batch, "Welcome to", 330, camera.viewportHeight / 2 + 130);
+        game.titlefont.draw(game.batch, "Magical", 160, camera.viewportHeight / 2 + 60);
+        game.titlefont.draw(game.batch, "Dots", 450, camera.viewportHeight / 2 + 60);
+        game.mainfont.draw(game.batch, "Tap anywhere to begin!", 250, camera.viewportHeight/2 - 50);
+
         game.batch.end();
+
+        stage.act(delta);
+        stage.draw();
 
         if (Gdx.input.isTouched()) {
             game.setScreen(new GameScreen(game));

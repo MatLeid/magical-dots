@@ -26,6 +26,7 @@ public class UnstableRelations extends Game {
         batch = new SpriteBatch();
         mainfont = new BitmapFont(Gdx.files.internal("mainfont.fnt"), Gdx.files.internal("mainfont.png"),false);
         titlefont = new BitmapFont(Gdx.files.internal("titlefont.fnt"), Gdx.files.internal("titlefont.png"),false);
+
         this.setScreen(new MainMenuScreen(this));
     }
 
