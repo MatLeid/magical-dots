@@ -55,6 +55,27 @@ public class Dot extends Actor {
         batch.begin();
     }
 
+    public boolean hasIsoscelesRelations() {
+        double dist1 = distance(relation1.getTarget());
+        double dist2 = distance(relation2.getTarget());
+
+        double median = (dist1 + dist2) / 2;
+        double absoluteDiff = Math.abs(dist1 - dist2);
+        if (absoluteDiff / median < 0.1) {
+            pointLight.setActive(true);
+            return true;
+        } else {
+            pointLight.setActive(false);
+            return false;
+        }
+    }
+
+    private double distance(Dot neighbour) {
+        double dx = getX() - neighbour.getX();         //horizontal difference
+        double dy = getY() - neighbour.getY();         //vertical difference
+        return Math.sqrt(dx * dx + dy * dy);           //distance using Pythagoras theorem
+    }
+
 
     public Actor hit(float x, float y, boolean touchable){
         if(!this.isVisible() || this.getTouchable() == Touchable.disabled)
@@ -90,28 +111,6 @@ public class Dot extends Actor {
 
     public void setRelation2(Relation relation2) {
         this.relation2 = relation2;
-    }
-
-    private double distance(Dot neighbour) {
-        double dx = getX() - neighbour.getX();         //horizontal difference
-        double dy = getY() - neighbour.getY();         //vertical difference
-        return Math.sqrt(dx * dx + dy * dy); //distance using Pythagoras theorem
-    }
-
-    public boolean hasIsoscelesRelations() {
-        double dist1 = distance(relation1.getTarget());
-        double dist2 = distance(relation2.getTarget());
-
-        double median = (dist1 + dist2) / 2;
-        double absoluteDiff = Math.abs(dist1 - dist2);
-        if (absoluteDiff / median < 0.1) {
-            pointLight.setActive(true);
-            return true;
-        } else {
-            pointLight.setActive(false);
-            return false;
-        }
-
     }
 
     public void setTouched(boolean touched) {
