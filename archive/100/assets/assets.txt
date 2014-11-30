@@ -1,7 +1,7 @@
 d:war/:0:application/unknown
-i:titlefont.png:96781:image/png
+i:titlefont.png:75461:image/png
 t:mainfont.fnt:11304:application/unknown
-t:titlefont.fnt:11238:application/unknown
+t:titlefont.fnt:11603:application/unknown
 i:mainfont.png:29531:image/png
 t:com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl:770:application/unknown
 t:com/badlogic/gdx/graphics/g3d/particles/particles.vertex.glsl:2730:application/unknown
