@@ -63,7 +63,8 @@ public class GameScreen implements Screen {
             }
 
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                touched = null;
+                if (touched != null)
+                    touched.setTouched(false);
             }
 
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
