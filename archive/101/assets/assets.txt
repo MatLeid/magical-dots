@@ -1,8 +1,8 @@
 d:war/:0:application/unknown
-t:titlefont.fnt:11238:application/unknown
-i:mainfont.png:29531:image/png
 i:titlefont.png:96781:image/png
 t:mainfont.fnt:11304:application/unknown
+t:titlefont.fnt:11238:application/unknown
+i:mainfont.png:29531:image/png
 t:com/badlogic/gdx/graphics/g3d/particles/particles.fragment.glsl:770:application/unknown
 t:com/badlogic/gdx/graphics/g3d/particles/particles.vertex.glsl:2730:application/unknown
 t:com/badlogic/gdx/graphics/g3d/shaders/default.fragment.glsl:5163:application/unknown
