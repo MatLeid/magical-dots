@@ -26,7 +26,7 @@ public class Relation extends Actor {
 
         if (source.hasIsoscelesRelations()) {
             renderer.setColor(UnstableRelations.YELLOW);
-            renderer.rectLine(source.getCenter(), target.getCenter(), 5);
+            renderer.rectLine(source.getCenter(), target.getCenter(), 10);
         }
 
         if (source.isTouched() && !source.hasIsoscelesRelations()) {
