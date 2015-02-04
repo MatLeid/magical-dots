@@ -1,7 +1,9 @@
 package de.donmatheo.game;
 
 import box2dLight.RayHandler;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+
 import java.util.Random;
 
 /**
@@ -14,7 +16,8 @@ public class DotController {
 
     public Array<Dot> createDots(int numberOfDots, RayHandler rayHandler) {
         for (int i = 0; i < numberOfDots; i++) {
-            dots.add(new Dot(rayHandler));
+            Dot dot = new Dot(rayHandler);
+            dots.add(dot);
         }
         return dots;
     }
@@ -29,26 +32,29 @@ public class DotController {
             while (number2 == i || number2 == number1) {
                 number2 = random.nextInt(dots.size);
             }
-            dots.get(i).setRelation1(dots.get(number1));
-            dots.get(i).setRelation2(dots.get(number2));
+            Dot selected = dots.get(i);
+            selected.setRelation1(new Relation(selected, dots.get(number1)));
+            selected.setRelation2(new Relation(selected, dots.get(number2)));
         }
     }
 
     public void setRandomLayout(float width, float height) {
         for (Dot dot : dots) {
-            do {
-                dot.x = dot.radius + random.nextInt((int) (width - 2 * dot.radius));
-                dot.y = dot.radius + random.nextInt((int) (height - 2 * dot.radius));
-                dot.getPointLight().setPosition(dot.x, dot.y);
-            } while(dotIntersectingOtherDots(dot));
+            float x = Dot.DEFAULTRADIUS + random.nextInt((int) (width - 2 * Dot.DEFAULTRADIUS));
+            float y = Dot.DEFAULTRADIUS + random.nextInt((int) (height - 2 * Dot.DEFAULTRADIUS));
+            dot.updatePosition(x, y);
         }
     }
 
-    private boolean dotIntersectingOtherDots(Dot standalone) {
-        for(int i = dots.indexOf(standalone, true) - 1; i > -1; i--){
-            if(standalone.overlaps(dots.get(i)))
-                return true;
+    public void addAllToStage(Stage stage) {
+        // add relations first because they have to be rendered before dots
+        for (Dot dot : dots) {
+            stage.addActor(dot.getRelation1());
+            stage.addActor(dot.getRelation2());
         }
-        return false;
+        // afterwards add all dots to the stage
+        for (Dot dot : dots) {
+            stage.addActor(dot);
+        }
     }
 }

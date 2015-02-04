@@ -2,6 +2,7 @@ package de.donmatheo.game.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import de.donmatheo.game.GameScreen;
 import de.donmatheo.game.UnstableRelations;
 
 public class DesktopLauncher {
