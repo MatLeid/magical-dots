@@ -56,8 +56,11 @@ public class GameScreen implements Screen {
         initaliseInputProcessors();
 
         stage.addListener(new InputListener() {
+
+            private Dot touched;
+
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                Dot touched = (Dot) stage.hit(event.getStageX(), event.getStageY(), true);
+                touched = (Dot) stage.hit(event.getStageX(), event.getStageY(), true);
                 if (touched != null) {
                     touched.setTouched(true);
                     offsetX = x - touched.getX();
@@ -67,17 +70,13 @@ public class GameScreen implements Screen {
             }
 
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                Dot touched = (Dot) stage.hit(event.getStageX(), event.getStageY(), true);
-                if (touched != null) {
+                if (touched != null)
                     touched.setTouched(false);
-                }
             }
 
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                for (Dot dot: dots) {
-                    if (dot.isTouched())
-                        dot.updatePosition(event.getStageX() - offsetX, event.getStageY() - offsetY);
-                }
+                if (touched != null)
+                    touched.updatePosition(event.getStageX() - offsetX, event.getStageY() - offsetY);
             }
         });
 
