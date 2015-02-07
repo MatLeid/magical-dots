@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -50,7 +51,6 @@ public class GameScreen implements Screen {
     private final float screen_width = Gdx.graphics.getWidth();
     private final float screen_height = Gdx.graphics.getHeight();
 
-
     private ArrayList<Music> songs;
 
     public GameScreen(final UnstableRelations game) {
@@ -75,6 +75,7 @@ public class GameScreen implements Screen {
                 if (game.isFinished()) {
                     game.setFinished(false);
                     game.setScreen(new GameScreen(game));
+                    dispose();
                 }
                 if (!game.isFinished()) {
                     touched = (Dot) stage.hit(event.getStageX(), event.getStageY(), true);
@@ -97,6 +98,7 @@ public class GameScreen implements Screen {
             }
 
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
+
                 if (!game.isFinished()) {
                     // move dot when touched
                     if (touched != null) {
@@ -154,8 +156,9 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        checkWinCondition();
-
+        if (!game.isFinished()) {
+            checkWinCondition();
+        }
         // set zoom and update camera
         camera.zoom = zoom;
         camera.update();
@@ -177,7 +180,7 @@ public class GameScreen implements Screen {
             Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
             renderer.begin(ShapeRenderer.ShapeType.Filled);
             renderer.setColor(new Color(0, 0, 0, 0.4f));
-            renderer.rect(0,0, screen_width, screen_height);
+            renderer.rect(0, 0, screen_width, screen_height);
             renderer.end();
             Gdx.gl.glDisable(GL20.GL_BLEND);
 
@@ -197,6 +200,7 @@ public class GameScreen implements Screen {
         }
        if (allIsolescent)
            game.setFinished(true);
+
     }
 
     @Override
@@ -215,12 +219,12 @@ public class GameScreen implements Screen {
         songs.add(Gdx.audio.newMusic(Gdx.files.internal("music/game-02.mp3")));
         songs.add(Gdx.audio.newMusic(Gdx.files.internal("music/game-03.mp3")));
         Collections.shuffle(songs);
-        for(Music m : songs){
+        for (Music m : songs) {
             m.setOnCompletionListener(new Music.OnCompletionListener() {
                 @Override
                 public void onCompletion(Music music) {
                     int index = songs.indexOf(music);
-                    if(index + 1 == songs.size() )
+                    if (index + 1 == songs.size())
                         songs.get(0).play();
                     else
                         songs.get(index + 1).play();
@@ -247,8 +251,7 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         lighting.dispose();
-        stage.dispose();
-        for(Music m : songs)
+        for (Music m : songs)
             m.dispose();
     }
 
