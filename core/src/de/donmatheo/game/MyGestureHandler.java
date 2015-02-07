@@ -57,7 +57,7 @@ public class MyGestureHandler implements GestureDetector.GestureListener {
         float ratio = initialDistance / distance;
 
         //Clamp range and set zoom
-        gameScreen.setZoom(MathUtils.clamp(initialScale * ratio, 0.5f, 2.0f));
+        gameScreen.setZoom(MathUtils.clamp(initialScale * ratio, gameScreen.getMinZoom(), gameScreen.getMaxZoom()));
 
         return true;
     }

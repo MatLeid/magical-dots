@@ -53,12 +53,12 @@ public class MyInputProcessor implements InputProcessor {
     public boolean scrolled(int amount) {
 
         //Zoom out
-        if (amount > 0 && gameScreen.getZoom() < 2) {
+        if (amount > 0 && gameScreen.getZoom() < gameScreen.getMaxZoom()) {
             gameScreen.setZoom(gameScreen.getZoom() + 0.1f);
         }
 
         //Zoom in
-        if (amount < 0 && gameScreen.getZoom() > 0.5) {
+        if (amount < 0 && gameScreen.getZoom() > gameScreen.getMinZoom()) {
             gameScreen.setZoom(gameScreen.getZoom() - 0.1f);
         }
 

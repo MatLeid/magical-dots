@@ -30,6 +30,8 @@ public class GameScreen implements Screen {
     private float offsetX;
     private float offsetY;
     private float zoom = 1.0f;
+    private float maxZoom = 2.0f;
+    private float minZoom = 0.5f;
 
     private World world;
 
@@ -43,8 +45,8 @@ public class GameScreen implements Screen {
     public GameScreen(final UnstableRelations game) {
         this.game = game;
         // setup camera
-        float screen_width = Gdx.graphics.getWidth();
-        float screen_height = Gdx.graphics.getHeight();
+        final float screen_width = Gdx.graphics.getWidth();
+        final float screen_height = Gdx.graphics.getHeight();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, screen_width, screen_height);
 
@@ -58,6 +60,7 @@ public class GameScreen implements Screen {
         stage.addListener(new InputListener() {
 
             private Dot touched;
+            Vector2 touchPosition = new Vector2();
 
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 touched = (Dot) stage.hit(event.getStageX(), event.getStageY(), true);
@@ -66,6 +69,7 @@ public class GameScreen implements Screen {
                     offsetX = x - touched.getX();
                     offsetY = y - touched.getY();
                 }
+                touchPosition.set(x, y);
                 return true;
             }
 
@@ -75,9 +79,30 @@ public class GameScreen implements Screen {
             }
 
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                if (touched != null)
+                // move dot when touched
+                if (touched != null) {
                     touched.updatePosition(event.getStageX() - offsetX, event.getStageY() - offsetY);
+                }
+                // otherwise move camera
+                else {
+                    camera.translate(touchPosition.x - x , touchPosition.y - y );
+
+                    // bring camera back into screen when out of boundary
+                    if (camera.position.x < 0) {
+                        camera.translate(Math.abs(camera.position.x), 0);
+                    }
+                    if (camera.position.y < 0) {
+                        camera.translate(0, Math.abs(camera.position.y));
+                    }
+                    if (camera.position.x > screen_width) {
+                        camera.translate(screen_width -camera.position.x , 0);
+                    }
+                    if (camera.position.y > screen_height) {
+                        camera.translate(0, screen_height- camera.position.y);
+                    }
+                }
             }
+
         });
 
         // setup lighting
@@ -95,14 +120,10 @@ public class GameScreen implements Screen {
     }
 
     public void initaliseInputProcessors() {
-
         inputMultiplexer = new InputMultiplexer();
-
         Gdx.input.setInputProcessor(inputMultiplexer);
-
         gestureHandler = new MyGestureHandler(this);
         inputProcessor = new MyInputProcessor(this);
-
         inputMultiplexer.addProcessor(inputProcessor);
         inputMultiplexer.addProcessor(new GestureDetector(gestureHandler));
         inputMultiplexer.addProcessor(stage);
@@ -165,5 +186,13 @@ public class GameScreen implements Screen {
 
     public void setZoom(float zoom) {
         this.zoom = zoom;
+    }
+
+    public float getMinZoom() {
+        return minZoom;
+    }
+
+    public float getMaxZoom() {
+        return maxZoom;
     }
 }
