@@ -11,12 +11,10 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
  */
 public class UnstableRelations extends Game {
 
-    public static final Color PURPLE = UnstableRelations.parseColor("B90091", 1);
-    public static final Color DARKGREY = UnstableRelations.parseColor("202020", 1);
-    public static final Color YELLOW = UnstableRelations.parseColor("FFF675", 1);
-    public static final Color BLUE = UnstableRelations.parseColor("14D6D6", 1);
-    public static final Color LIGHTBLUE = UnstableRelations.parseColor("BAFFFF", 1);
-
+    public static final Color DARKGREY = parseColor("202020", 1);
+    public static final Color YELLOW = parseColor("FFF675", 1);
+    public static final Color BLUE = parseColor("14D6D6", 1);
+    public static final Color LIGHTBLUE = parseColor("BAFFFF", 1);
 
     public SpriteBatch batch;
     public BitmapFont mainfont;
