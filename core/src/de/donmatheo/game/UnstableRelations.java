@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import sun.applet.Main;
 
 /**
  * Created by donmatheo on 19.11.2014.
@@ -20,12 +21,16 @@ public class UnstableRelations extends Game {
     public BitmapFont mainfont;
     public BitmapFont titlefont;
 
+    private boolean finished;
+
+
     public void create() {
         batch = new SpriteBatch();
         mainfont = new BitmapFont(Gdx.files.internal("mainfont.fnt"), Gdx.files.internal("mainfont.png"),false);
         titlefont = new BitmapFont(Gdx.files.internal("titlefont.fnt"), Gdx.files.internal("titlefont.png"),false);
 
-        this.setScreen(new MainMenuScreen(this));
+        MainMenuScreen mainMenuScreen = new MainMenuScreen((this));
+        setScreen(mainMenuScreen);
     }
 
     public void render() {
@@ -50,4 +55,11 @@ public class UnstableRelations extends Game {
         return new Color(f1, f2, f3, alpha);
     }
 
+    public boolean isFinished() {
+        return finished;
+    }
+
+    public void setFinished(boolean finished) {
+        this.finished = finished;
+    }
 }

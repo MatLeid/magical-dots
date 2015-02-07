@@ -4,8 +4,10 @@ import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -21,6 +23,7 @@ import java.util.Arrays;
 public class GameScreen implements Screen {
 
     private final UnstableRelations game;
+    private final ShapeRenderer renderer;
 
     private OrthographicCamera camera;
 
@@ -42,11 +45,13 @@ public class GameScreen implements Screen {
     private MyGestureHandler gestureHandler;
     private MyInputProcessor inputProcessor;
 
+    private final float screen_width = Gdx.graphics.getWidth();
+    private final float screen_height = Gdx.graphics.getHeight();
+
+
     public GameScreen(final UnstableRelations game) {
         this.game = game;
         // setup camera
-        final float screen_width = Gdx.graphics.getWidth();
-        final float screen_height = Gdx.graphics.getHeight();
         camera = new OrthographicCamera();
         camera.setToOrtho(false, screen_width, screen_height);
 
@@ -63,46 +68,56 @@ public class GameScreen implements Screen {
             Vector2 touchPosition = new Vector2();
 
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                touched = (Dot) stage.hit(event.getStageX(), event.getStageY(), true);
-                if (touched != null) {
-                    touched.setTouched(true);
-                    offsetX = x - touched.getX();
-                    offsetY = y - touched.getY();
+                if (game.isFinished()) {
+                    game.setFinished(false);
+                    game.setScreen(new GameScreen(game));
                 }
-                touchPosition.set(x, y);
+                if (!game.isFinished()) {
+                    touched = (Dot) stage.hit(event.getStageX(), event.getStageY(), true);
+                    if (touched != null) {
+                        touched.setTouched(true);
+                        offsetX = x - touched.getX();
+                        offsetY = y - touched.getY();
+                    }
+                    touchPosition.set(x, y);
+                }
+
                 return true;
             }
 
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (touched != null)
-                    touched.setTouched(false);
+                if (!game.isFinished()) {
+                    if (touched != null)
+                        touched.setTouched(false);
+                }
             }
 
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                // move dot when touched
-                if (touched != null) {
-                    touched.updatePosition(event.getStageX() - offsetX, event.getStageY() - offsetY);
-                }
-                // otherwise move camera
-                else {
-                    camera.translate(touchPosition.x - x , touchPosition.y - y );
+                if (!game.isFinished()) {
+                    // move dot when touched
+                    if (touched != null) {
+                        touched.updatePosition(event.getStageX() - offsetX, event.getStageY() - offsetY);
+                    }
+                    // otherwise move camera
+                    else {
+                        camera.translate(touchPosition.x - x, touchPosition.y - y);
 
-                    // bring camera back into screen when out of boundary
-                    if (camera.position.x < 0) {
-                        camera.translate(Math.abs(camera.position.x), 0);
-                    }
-                    if (camera.position.y < 0) {
-                        camera.translate(0, Math.abs(camera.position.y));
-                    }
-                    if (camera.position.x > screen_width) {
-                        camera.translate(screen_width -camera.position.x , 0);
-                    }
-                    if (camera.position.y > screen_height) {
-                        camera.translate(0, screen_height- camera.position.y);
+                        // bring camera back into screen when out of boundary
+                        if (camera.position.x < 0) {
+                            camera.translate(Math.abs(camera.position.x), 0);
+                        }
+                        if (camera.position.y < 0) {
+                            camera.translate(0, Math.abs(camera.position.y));
+                        }
+                        if (camera.position.x > screen_width) {
+                            camera.translate(screen_width - camera.position.x, 0);
+                        }
+                        if (camera.position.y > screen_height) {
+                            camera.translate(0, screen_height - camera.position.y);
+                        }
                     }
                 }
             }
-
         });
 
         // setup lighting
@@ -116,6 +131,10 @@ public class GameScreen implements Screen {
         dotController.setRandomRelations();
         dotController.setRandomLayout(camera.viewportWidth, camera.viewportHeight);
         dotController.addAllToStage(stage);
+
+        // setup shapeRenderer
+        renderer = new ShapeRenderer();
+
 
     }
 
@@ -131,6 +150,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+        checkWinCondition();
+
         // set zoom and update camera
         camera.zoom = zoom;
         camera.update();
@@ -147,6 +168,31 @@ public class GameScreen implements Screen {
         stage.act(delta);
         stage.draw();
 
+        if (game.isFinished()) {
+            Gdx.gl.glEnable(GL20.GL_BLEND);
+            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+            renderer.begin(ShapeRenderer.ShapeType.Filled);
+            renderer.setColor(new Color(0, 0, 0, 0.4f));
+            renderer.rect(0,0, screen_width, screen_height);
+            renderer.end();
+            Gdx.gl.glDisable(GL20.GL_BLEND);
+
+            game.batch.begin();
+            game.titlefont.draw(game.batch, "Congratulations", 80, screen_height / 2 + 60);
+            game.mainfont.draw(game.batch, "Tap anywhere to restart", 250, screen_height / 2 - 180);
+            game.batch.end();
+        }
+    }
+
+    private void checkWinCondition() {
+        boolean allIsolescent = true;
+        for (Dot dot : dots) {
+          if (!dot.hasIsoscelesRelations()) {
+            allIsolescent = false;
+          }
+        }
+       if (allIsolescent)
+           game.setFinished(true);
     }
 
     @Override
@@ -177,7 +223,7 @@ public class GameScreen implements Screen {
     @Override
     public void dispose() {
         lighting.dispose();
-        stage.dispose();
+        stage.dispose ();
     }
 
     public float getZoom() {
