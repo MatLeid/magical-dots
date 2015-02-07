@@ -2,6 +2,8 @@ package de.donmatheo.game;
 
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -24,6 +26,8 @@ public class Dot extends Actor {
     private ShapeRenderer renderer;
     private boolean touched;
     private Vector2 center;
+
+    private static Sound getsStable = Gdx.audio.newSound(Gdx.files.internal("sound/gets-stable.ogg"));
 
     public Dot(RayHandler rayHandler) {
         pointLight = new PointLight(rayHandler, 200, Color.ORANGE, 250, getX(), getY());
@@ -62,6 +66,8 @@ public class Dot extends Actor {
         double median = (dist1 + dist2) / 2;
         double absoluteDiff = Math.abs(dist1 - dist2);
         if (absoluteDiff / median < 0.1) {
+            if(!pointLight.isActive())
+                getsStable.play();
             pointLight.setActive(true);
             return true;
         } else {

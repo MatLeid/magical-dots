@@ -4,11 +4,11 @@ import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -16,7 +16,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class GameScreen implements Screen {
 
@@ -41,6 +42,8 @@ public class GameScreen implements Screen {
     private InputMultiplexer inputMultiplexer;
     private MyGestureHandler gestureHandler;
     private MyInputProcessor inputProcessor;
+
+    private ArrayList<Music> songs;
 
     public GameScreen(final UnstableRelations game) {
         this.game = game;
@@ -156,12 +159,32 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
+        initialiseMusic();
+    }
 
+    private void initialiseMusic() {
+        songs = new ArrayList<Music>();
+        songs.add(Gdx.audio.newMusic(Gdx.files.internal("music/game-01.mp3")));
+        songs.add(Gdx.audio.newMusic(Gdx.files.internal("music/game-02.mp3")));
+        songs.add(Gdx.audio.newMusic(Gdx.files.internal("music/game-03.mp3")));
+        Collections.shuffle(songs);
+        for(Music m : songs){
+            m.setOnCompletionListener(new Music.OnCompletionListener() {
+                @Override
+                public void onCompletion(Music music) {
+                    int index = songs.indexOf(music);
+                    if(index + 1 == songs.size() )
+                        songs.get(0).play();
+                    else
+                        songs.get(index + 1).play();
+                }
+            });
+        }
+        songs.get(0).play();
     }
 
     @Override
     public void hide() {
-
     }
 
     @Override
@@ -178,6 +201,8 @@ public class GameScreen implements Screen {
     public void dispose() {
         lighting.dispose();
         stage.dispose();
+        for(Music m : songs)
+            m.dispose();
     }
 
     public float getZoom() {

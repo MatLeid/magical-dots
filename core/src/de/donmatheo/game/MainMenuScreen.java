@@ -2,6 +2,7 @@ package de.donmatheo.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -14,9 +15,12 @@ public class MainMenuScreen implements Screen {
 
     final UnstableRelations game;
     private final Stage stage;
+    private Music music;
     OrthographicCamera camera;
 
     public MainMenuScreen(final UnstableRelations game) {
+        music = Gdx.audio.newMusic(Gdx.files.internal("music/start-screen.mp3"));
+
         this.game = game;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);
@@ -64,7 +68,8 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void show() {
-
+        music.setLooping(true);
+        music.play();
     }
 
     @Override
@@ -84,6 +89,6 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void dispose() {
-
+        music.dispose();
     }
 }
