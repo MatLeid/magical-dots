@@ -218,7 +218,7 @@ public class GameScreen implements Screen {
         songs.add(Gdx.audio.newMusic(Gdx.files.internal("music/game-01.mp3")));
         songs.add(Gdx.audio.newMusic(Gdx.files.internal("music/game-02.mp3")));
         songs.add(Gdx.audio.newMusic(Gdx.files.internal("music/game-03.mp3")));
-        Collections.shuffle(songs);
+        //Collections.shuffle(songs);
         for (Music m : songs) {
             m.setOnCompletionListener(new Music.OnCompletionListener() {
                 @Override
