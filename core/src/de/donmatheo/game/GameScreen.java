@@ -5,14 +5,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -21,7 +19,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Random;
 
 public class GameScreen implements Screen {
 
@@ -218,7 +216,7 @@ public class GameScreen implements Screen {
         songs.add(Gdx.audio.newMusic(Gdx.files.internal("music/game-01.mp3")));
         songs.add(Gdx.audio.newMusic(Gdx.files.internal("music/game-02.mp3")));
         songs.add(Gdx.audio.newMusic(Gdx.files.internal("music/game-03.mp3")));
-        //Collections.shuffle(songs);
+        shuffleSongs();
         for (Music m : songs) {
             m.setOnCompletionListener(new Music.OnCompletionListener() {
                 @Override
@@ -232,6 +230,19 @@ public class GameScreen implements Screen {
             });
         }
         songs.get(0).play();
+    }
+
+    private void shuffleSongs() {
+        int n = songs.size();
+        Random random = new Random();
+        for (int i = 0; i < n; i++)
+            swap(i, random.nextInt(n));
+    }
+
+    private void swap(int i, int change) {
+        Music swapper = songs.get(i);
+        songs.set(i, songs.get(change));
+        songs.set(change, swapper);
     }
 
     @Override
