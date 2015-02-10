@@ -49,6 +49,9 @@ public class GameScreen implements Screen {
     private final float screen_width = Gdx.graphics.getWidth();
     private final float screen_height = Gdx.graphics.getHeight();
 
+    private Dot touchedDot;
+
+
     private ArrayList<Music> songs;
 
     public GameScreen(final UnstableRelations game) {
@@ -66,9 +69,6 @@ public class GameScreen implements Screen {
 
         stage.addListener(new InputListener() {
 
-            private Dot touched;
-            Vector2 touchPosition = new Vector2();
-
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if (game.isFinished()) {
                     game.setFinished(false);
@@ -76,13 +76,12 @@ public class GameScreen implements Screen {
                     dispose();
                 }
                 if (!game.isFinished()) {
-                    touched = (Dot) stage.hit(event.getStageX(), event.getStageY(), true);
-                    if (touched != null) {
-                        touched.setTouched(true);
-                        offsetX = x - touched.getX();
-                        offsetY = y - touched.getY();
+                    touchedDot = (Dot) stage.hit(event.getStageX(), event.getStageY(), true);
+                    if (touchedDot != null) {
+                        touchedDot.setTouched(true);
+                        offsetX = x - touchedDot.getX();
+                        offsetY = y - touchedDot.getY();
                     }
-                    touchPosition.set(x, y);
                 }
 
                 return true;
@@ -90,35 +89,16 @@ public class GameScreen implements Screen {
 
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 if (!game.isFinished()) {
-                    if (touched != null)
-                        touched.setTouched(false);
+                    if (touchedDot != null)
+                        touchedDot.setTouched(false);
                 }
             }
 
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
-
                 if (!game.isFinished()) {
                     // move dot when touched
-                    if (touched != null) {
-                        touched.updatePosition(event.getStageX() - offsetX, event.getStageY() - offsetY);
-                    }
-                    // otherwise move camera
-                    else {
-                        camera.translate(touchPosition.x - x, touchPosition.y - y);
-
-                        // bring camera back into screen when out of boundary
-                        if (camera.position.x < 0) {
-                            camera.translate(Math.abs(camera.position.x), 0);
-                        }
-                        if (camera.position.y < 0) {
-                            camera.translate(0, Math.abs(camera.position.y));
-                        }
-                        if (camera.position.x > screen_width) {
-                            camera.translate(screen_width - camera.position.x, 0);
-                        }
-                        if (camera.position.y > screen_height) {
-                            camera.translate(0, screen_height - camera.position.y);
-                        }
+                    if (touchedDot != null) {
+                        touchedDot.updatePosition(event.getStageX() - offsetX, event.getStageY() - offsetY);
                     }
                 }
             }
@@ -280,5 +260,13 @@ public class GameScreen implements Screen {
 
     public float getMaxZoom() {
         return maxZoom;
+    }
+
+    public OrthographicCamera getCamera() {
+        return camera;
+    }
+
+    public Dot getTouchedDot() {
+        return touchedDot;
     }
 }

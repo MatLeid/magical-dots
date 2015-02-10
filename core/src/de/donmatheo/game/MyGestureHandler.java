@@ -1,5 +1,6 @@
 package de.donmatheo.game;
 
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -33,6 +34,27 @@ public class MyGestureHandler implements GestureDetector.GestureListener {
 
     @Override
     public boolean pan(float x, float y, float deltaX, float deltaY) {
+        if (gameScreen.getTouchedDot() == null) {
+            OrthographicCamera camera = gameScreen.getCamera();
+
+            camera.translate(-deltaX, deltaY);
+            camera.update();
+
+            // bring camera back into screen when out of boundary
+            if (camera.position.x < 0) {
+                camera.translate(Math.abs(camera.position.x), 0);
+            }
+            if (camera.position.y < 0) {
+                camera.translate(0, Math.abs(camera.position.y));
+            }
+            if (camera.position.x > 800) {
+                camera.translate(800 - camera.position.x, 0);
+            }
+            if (camera.position.y > 480) {
+                camera.translate(0, 480 - camera.position.y);
+            }
+        }
+
         return false;
     }
 
