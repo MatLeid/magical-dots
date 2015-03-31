@@ -24,14 +24,14 @@ public class Relation extends Actor {
         renderer.setProjectionMatrix(batch.getProjectionMatrix());
         renderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        if (source.hasIsoscelesRelations()) {
-            renderer.setColor(UnstableRelations.YELLOW);
+        if (source.isTouched() && !source.hasIsoscelesRelations()) {
+            renderer.setColor(UnstableRelations.BLUE);
             renderer.rectLine(source.getCenter(), target.getCenter(), 10);
         }
 
-        if (source.isTouched() && !source.hasIsoscelesRelations()) {
-            renderer.setColor(UnstableRelations.BLUE);
-            renderer.rectLine(source.getCenter(), target.getCenter(), 3);
+        if (source.hasIsoscelesRelations()) {
+            renderer.setColor(UnstableRelations.YELLOW);
+            renderer.rectLine(source.getCenter(), target.getCenter(), 7);
         }
         renderer.end();
         batch.begin();
