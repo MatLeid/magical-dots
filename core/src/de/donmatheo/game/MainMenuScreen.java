@@ -6,6 +6,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 /**
@@ -14,7 +15,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class MainMenuScreen implements Screen {
 
     final UnstableRelations game;
-    private final Stage stage;
+    private Stage stage;
     private Music music;
     OrthographicCamera camera;
 
@@ -22,13 +23,6 @@ public class MainMenuScreen implements Screen {
         music = Gdx.audio.newMusic(Gdx.files.internal("music/start-screen.mp3"));
 
         this.game = game;
-        camera = new OrthographicCamera();
-        camera.setToOrtho(false, 800, 480);
-        // setup viewport and stage
-        FitViewport viewport = new FitViewport(800, 480);
-        viewport.setCamera(camera);
-        stage = new Stage(viewport);
-        Gdx.input.setInputProcessor(stage);
 
     }
 
@@ -39,16 +33,6 @@ public class MainMenuScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         camera.update();
-        game.batch.setProjectionMatrix(camera.combined);
-
-        game.batch.begin();
-
-        game.mainfont.draw(game.batch, "Welcome to", 330, camera.viewportHeight / 2 + 130);
-        game.titlefont.draw(game.batch, "Magical", 160, camera.viewportHeight / 2 + 60);
-        game.titlefont.draw(game.batch, "Dots", 450, camera.viewportHeight / 2 + 60);
-        game.mainfont.draw(game.batch, "Tap anywhere to begin!", 250, camera.viewportHeight/2 - 50);
-
-        game.batch.end();
 
         stage.act(delta);
         stage.draw();
@@ -68,6 +52,21 @@ public class MainMenuScreen implements Screen {
     public void show() {
         music.setLooping(true);
         music.play();
+
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, 800, 480);
+        // setup viewport and stage
+        FitViewport viewport = new FitViewport(800, 480);
+        viewport.setCamera(camera);
+        stage = new Stage(viewport);
+        Gdx.input.setInputProcessor(stage);
+
+
+        Title title = new Title(game, camera);
+        StartButton startButton = new StartButton(game, camera);
+
+        stage.addActor(title);
+        stage.addActor(startButton);
     }
 
     @Override

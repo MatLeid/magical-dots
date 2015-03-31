@@ -10,11 +10,14 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -24,7 +27,7 @@ import java.util.Random;
 public class GameScreen implements Screen {
 
     private final UnstableRelations game;
-    private final ShapeRenderer renderer;
+    private final Ending ending;
 
     private OrthographicCamera camera;
 
@@ -116,9 +119,10 @@ public class GameScreen implements Screen {
         dotController.setRandomLayout(camera.viewportWidth, camera.viewportHeight);
         dotController.addAllToStage(stage);
 
-        // setup shapeRenderer
-        renderer = new ShapeRenderer();
-
+        // setup Ending screen actor
+        ending = new Ending(game, camera);
+        stage.addActor(ending);
+        ending.addAction(Actions.hide());
 
     }
 
@@ -154,18 +158,7 @@ public class GameScreen implements Screen {
         stage.draw();
 
         if (game.isFinished()) {
-            Gdx.gl.glEnable(GL20.GL_BLEND);
-            Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-            renderer.begin(ShapeRenderer.ShapeType.Filled);
-            renderer.setColor(new Color(0, 0, 0, 0.4f));
-            renderer.rect(0, 0, screen_width, screen_height);
-            renderer.end();
-            Gdx.gl.glDisable(GL20.GL_BLEND);
-
-            game.batch.begin();
-            game.titlefont.draw(game.batch, "Congratulations", 80, screen_height / 2 + 60);
-            game.mainfont.draw(game.batch, "Tap anywhere to restart", 250, screen_height / 2 - 180);
-            game.batch.end();
+            ending.addAction(Actions.show());
         }
     }
 

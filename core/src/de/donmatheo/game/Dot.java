@@ -5,12 +5,16 @@ import box2dLight.RayHandler;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
 /**
  * Created by donmatheo on 18.10.2014.
@@ -28,6 +32,9 @@ public class Dot extends Actor {
     private Vector2 center;
 
     private static Sound getsStable = Gdx.audio.newSound(Gdx.files.internal("sound/gets-stable.ogg"));
+    private Texture dotImageBlue;
+    private Texture dotImageYellow;
+
 
     public Dot(RayHandler rayHandler) {
         pointLight = new PointLight(rayHandler, 200, Color.ORANGE, 250, getX(), getY());
@@ -36,27 +43,17 @@ public class Dot extends Actor {
         circleBounds = new Circle(DEFAULTRADIUS, DEFAULTRADIUS, DEFAULTRADIUS);
         center = new Vector2();
         setBounds(0, 0, DEFAULTRADIUS * 2, DEFAULTRADIUS * 2);
-        setOrigin(0,0);
+        setOrigin(0, 0);
+        dotImageBlue = new Texture(Gdx.files.internal("dot_blue.png"));
+        dotImageYellow = new Texture(Gdx.files.internal("dot_yellow.png"));
     }
 
     public void draw(Batch batch, float parentAlpha) {
-        batch.end();
-        renderer.setProjectionMatrix(batch.getProjectionMatrix());
-        renderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        renderer.setColor(UnstableRelations.YELLOW);
         if (hasIsoscelesRelations()) {
-            renderer.circle( center.x, center.y, DEFAULTRADIUS + 4);
-        }
-
-        if (hasIsoscelesRelations()) {
-            renderer.setColor(UnstableRelations.LIGHTBLUE);
+            batch.draw(dotImageYellow, getX(), getY(), 2*DEFAULTRADIUS, 2*DEFAULTRADIUS);
         } else {
-            renderer.setColor(UnstableRelations.BLUE);
+            batch.draw(dotImageBlue, getX(), getY(), 2*DEFAULTRADIUS, 2*DEFAULTRADIUS);
         }
-        renderer.circle(center.x, center.y, DEFAULTRADIUS);
-        renderer.end();
-        batch.begin();
     }
 
     public boolean hasIsoscelesRelations() {
