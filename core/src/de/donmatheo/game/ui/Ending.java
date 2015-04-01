@@ -1,4 +1,4 @@
-package de.donmatheo.game;
+package de.donmatheo.game.ui;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -7,19 +7,19 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import de.donmatheo.game.MagicalDots;
 
 /**
  * Created by donmatheo on 31.03.2015.
  */
 public class Ending extends Actor {
-    private final UnstableRelations game;
+    private final MagicalDots game;
     private final ShapeRenderer renderer;
     OrthographicCamera camera;
 
     
 
-    public Ending(UnstableRelations game, OrthographicCamera camera) {
+    public Ending(MagicalDots game, OrthographicCamera camera) {
         this.game = game;
         this.camera = camera;
         renderer = new ShapeRenderer();

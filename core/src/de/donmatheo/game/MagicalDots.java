@@ -10,7 +10,7 @@ import sun.applet.Main;
 /**
  * Created by donmatheo on 19.11.2014.
  */
-public class UnstableRelations extends Game {
+public class MagicalDots extends Game {
 
     public static final Color DARKGREY = parseColor("202020", 1);
     public static final Color YELLOW = parseColor("FFF675", 1);
@@ -23,13 +23,19 @@ public class UnstableRelations extends Game {
 
     private boolean finished;
 
+    public MainMenuScreen getMainMenuScreen() {
+        return mainMenuScreen;
+    }
+
+    private MainMenuScreen mainMenuScreen;
+
 
     public void create() {
         batch = new SpriteBatch();
         mainfont = new BitmapFont(Gdx.files.internal("mainfont.fnt"), Gdx.files.internal("mainfont.png"),false);
         titlefont = new BitmapFont(Gdx.files.internal("titlefont.fnt"), Gdx.files.internal("titlefont.png"),false);
 
-        MainMenuScreen mainMenuScreen = new MainMenuScreen((this));
+        mainMenuScreen = new MainMenuScreen((this));
         setScreen(mainMenuScreen);
     }
 

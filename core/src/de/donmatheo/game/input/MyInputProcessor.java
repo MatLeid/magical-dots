@@ -1,6 +1,7 @@
-package de.donmatheo.game;
+package de.donmatheo.game.input;
 
 import com.badlogic.gdx.InputProcessor;
+import de.donmatheo.game.GameScreen;
 
 /**
  * Created by donmatheo on 04.02.2015.

@@ -5,29 +5,30 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.input.GestureDetector;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import de.donmatheo.game.entities.Dot;
+import de.donmatheo.game.input.MyGestureHandler;
+import de.donmatheo.game.input.MyInputProcessor;
+import de.donmatheo.game.ui.Ending;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 public class GameScreen implements Screen {
 
-    private final UnstableRelations game;
+    private final MagicalDots game;
     private final Ending ending;
+    private final FitViewport viewport;
 
     private OrthographicCamera camera;
 
@@ -57,14 +58,14 @@ public class GameScreen implements Screen {
 
     private ArrayList<Music> songs;
 
-    public GameScreen(final UnstableRelations game) {
+    public GameScreen(final MagicalDots game) {
         this.game = game;
         // setup camera
         camera = new OrthographicCamera();
         camera.setToOrtho(false, screen_width, screen_height);
 
         // setup viewport and stage
-        FitViewport viewport = new FitViewport(800, 480);
+        viewport = new FitViewport(800, 480);
         viewport.setCamera(camera);
         stage = new Stage(viewport);
 
@@ -111,7 +112,7 @@ public class GameScreen implements Screen {
         world = new World(new Vector2(0, -9.8f), false);
         lighting = new RayHandler(world);
         lighting.setCombinedMatrix(camera.combined);
-        lighting.setAmbientLight(UnstableRelations.DARKGREY);
+        lighting.setAmbientLight(MagicalDots.DARKGREY);
 
         // setup dots
         dots = dotController.createDots(5, lighting);
@@ -176,7 +177,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        stage.getViewport().update(width, height, true);
+        viewport.update(width, height);
     }
 
     @Override

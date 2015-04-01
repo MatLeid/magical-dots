@@ -3,6 +3,8 @@ package de.donmatheo.game;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
+import de.donmatheo.game.entities.Dot;
+import de.donmatheo.game.entities.Relation;
 
 import java.util.Random;
 

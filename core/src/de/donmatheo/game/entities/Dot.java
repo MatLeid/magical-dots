@@ -1,4 +1,4 @@
-package de.donmatheo.game;
+package de.donmatheo.game.entities;
 
 import box2dLight.PointLight;
 import box2dLight.RayHandler;
@@ -7,10 +7,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -27,7 +24,6 @@ public class Dot extends Actor {
     private Relation relation1;
     private Relation relation2;
 
-    private ShapeRenderer renderer;
     private boolean touched;
     private Vector2 center;
 
@@ -39,16 +35,24 @@ public class Dot extends Actor {
     public Dot(RayHandler rayHandler) {
         pointLight = new PointLight(rayHandler, 200, Color.ORANGE, 250, getX(), getY());
         pointLight.setActive(false);
-        renderer = new ShapeRenderer();
         circleBounds = new Circle(DEFAULTRADIUS, DEFAULTRADIUS, DEFAULTRADIUS);
         center = new Vector2();
         setBounds(0, 0, DEFAULTRADIUS * 2, DEFAULTRADIUS * 2);
         setOrigin(0, 0);
+        setColor(new Color(1f, 1f, 1f, 0f));
         dotImageBlue = new Texture(Gdx.files.internal("dot_blue.png"));
         dotImageYellow = new Texture(Gdx.files.internal("dot_yellow.png"));
+        addAction(Actions.fadeIn(1f));
+
+    }
+
+    @Override
+    public void act(float delta) {
+        super.act(delta);
     }
 
     public void draw(Batch batch, float parentAlpha) {
+        batch.setColor(this.getColor());
         if (hasIsoscelesRelations()) {
             batch.draw(dotImageYellow, getX(), getY(), 2*DEFAULTRADIUS, 2*DEFAULTRADIUS);
         } else {

@@ -1,9 +1,10 @@
-package de.donmatheo.game;
+package de.donmatheo.game.input;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import de.donmatheo.game.GameScreen;
 
 /**
  * Created by donmatheo on 04.02.2015.

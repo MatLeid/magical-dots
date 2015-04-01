@@ -2,7 +2,7 @@ import box2dLight.RayHandler;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
-import de.donmatheo.game.Dot;
+import de.donmatheo.game.entities.Dot;
 import de.donmatheo.game.DotController;
 import org.junit.Before;
 import org.junit.Test;
