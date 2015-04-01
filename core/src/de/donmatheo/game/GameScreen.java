@@ -58,7 +58,7 @@ public class GameScreen implements Screen {
 
     private ArrayList<Music> songs;
 
-    public GameScreen(final MagicalDots game) {
+    public GameScreen(final MagicalDots game, boolean hardcoreMode) {
         this.game = game;
         // setup camera
         camera = new OrthographicCamera();
@@ -76,7 +76,7 @@ public class GameScreen implements Screen {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 if (game.isFinished()) {
                     game.setFinished(false);
-                    game.setScreen(new GameScreen(game));
+                    game.setScreen(new GameScreen(game, false));
                     dispose();
                 }
                 if (!game.isFinished()) {

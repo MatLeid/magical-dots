@@ -8,10 +8,19 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
+import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
+
+import java.util.Random;
+
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.removeAction;
+
 
 /**
  * Created by donmatheo on 18.10.2014.
@@ -23,7 +32,6 @@ public class Dot extends Actor {
     private Circle circleBounds;
     private Relation relation1;
     private Relation relation2;
-
     private boolean touched;
     private Vector2 center;
 
@@ -31,6 +39,7 @@ public class Dot extends Actor {
     private Texture dotImageBlue;
     private Texture dotImageYellow;
 
+    private SequenceAction forever;
 
     public Dot(RayHandler rayHandler) {
         pointLight = new PointLight(rayHandler, 200, Color.ORANGE, 250, getX(), getY());
@@ -39,24 +48,51 @@ public class Dot extends Actor {
         center = new Vector2();
         setBounds(0, 0, DEFAULTRADIUS * 2, DEFAULTRADIUS * 2);
         setOrigin(0, 0);
+        setScale(0.1f);
         setColor(new Color(1f, 1f, 1f, 0f));
         dotImageBlue = new Texture(Gdx.files.internal("dot_blue.png"));
         dotImageYellow = new Texture(Gdx.files.internal("dot_yellow.png"));
-        addAction(Actions.fadeIn(1f));
+        addAction(Actions.fadeIn(1.2f));
+        addAction(Actions.scaleTo(1f, 1f, 2f, Interpolation.elasticOut));
+        addDotAction();
 
+    }
+
+    private void addDotAction() {
+        forever = sequence(delay(3f), Actions.moveBy(randomFloat(), randomFloat(), 0.8f, Interpolation.bounceOut), run(new Runnable() {
+            public void run () {
+                addDotAction();
+            }
+        }));
+        addAction(forever);
+    }
+
+    private float randomFloat() {
+        int sign = 1;
+        Random rand = new Random();
+        if(rand.nextBoolean())
+            sign = -1;
+        return rand.nextInt(50) * sign;
+    }
+
+    private void removeDotAction(){
+        removeAction(forever);
     }
 
     @Override
     public void act(float delta) {
         super.act(delta);
+        updatePosition(getX(), getY());
+        setScale(this.getScaleX(), this.getScaleY());
     }
 
     public void draw(Batch batch, float parentAlpha) {
+        batch.setProjectionMatrix(getStage().getCamera().combined);
         batch.setColor(this.getColor());
         if (hasIsoscelesRelations()) {
-            batch.draw(dotImageYellow, getX(), getY(), 2*DEFAULTRADIUS, 2*DEFAULTRADIUS);
+            batch.draw(dotImageYellow, getX(), getY(), 2 * DEFAULTRADIUS * getScaleX(), 2 * DEFAULTRADIUS * getScaleY());
         } else {
-            batch.draw(dotImageBlue, getX(), getY(), 2*DEFAULTRADIUS, 2*DEFAULTRADIUS);
+            batch.draw(dotImageBlue, getX(), getY(), 2 * DEFAULTRADIUS * getScaleX(), 2 * DEFAULTRADIUS * getScaleY());
         }
     }
 
@@ -67,12 +103,17 @@ public class Dot extends Actor {
         double median = (dist1 + dist2) / 2;
         double absoluteDiff = Math.abs(dist1 - dist2);
         if (absoluteDiff / median < 0.1) {
-            if(!pointLight.isActive())
+            if(!pointLight.isActive()) {
                 getsStable.play();
+                removeDotAction();
+            }
             pointLight.setActive(true);
             return true;
         } else {
-            pointLight.setActive(false);
+            if(pointLight.isActive()) {
+                pointLight.setActive(false);
+                addDotAction();
+            }
             return false;
         }
     }
@@ -100,6 +141,17 @@ public class Dot extends Actor {
     }
 
     public void updatePosition(float x, float y){
+        if(getStage() != null) {
+            if (x < 0)
+                x = 0;
+            if (x > getStage().getCamera().viewportWidth)
+                x = getStage().getCamera().viewportWidth - (2 * DEFAULTRADIUS);
+            if (y < 0)
+                y = 0;
+            if (y > getStage().getCamera().viewportHeight)
+                y = getStage().getCamera().viewportHeight - (2 * DEFAULTRADIUS);
+
+        }
         setPosition(x, y);
         center.set(x + getWidth() / 2, y + getHeight()/2);
         pointLight.setPosition(center);
@@ -121,6 +173,10 @@ public class Dot extends Actor {
     }
 
     public void setTouched(boolean touched) {
+        if(touched)
+            removeDotAction();
+        else
+            addDotAction();
         this.touched = touched;
     }
 
