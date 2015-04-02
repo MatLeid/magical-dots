@@ -21,12 +21,14 @@ public class MagicalDots extends Game {
     private  float screen_width;
     private  float screen_height;
 
+    private MainMenuScreen menuScreen;
 
     public void create() {
         screen_width = Gdx.graphics.getWidth();
         screen_height = Gdx.graphics.getHeight();
 
-        setScreen(new MainMenuScreen(this));
+        menuScreen = new MainMenuScreen(this);
+        setScreen(menuScreen);
     }
 
     public void render() {
@@ -63,5 +65,9 @@ public class MagicalDots extends Game {
 
     public float getScreen_width() {
         return screen_width;
+    }
+
+    public MainMenuScreen getMenuScreen() {
+        return menuScreen;
     }
 }

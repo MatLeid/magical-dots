@@ -57,6 +57,7 @@ public class GameScreen implements Screen {
     public GameScreen(final MagicalDots game, boolean hardcoreMode) {
         System.out.println("hardcoremode: " + hardcoreMode);
         this.game = game;
+
         // setup camera
         camera = new OrthographicCamera();
         camera.setToOrtho(false, game.getScreen_width(), game.getScreen_height());
@@ -71,11 +72,6 @@ public class GameScreen implements Screen {
         stage.addListener(new InputListener() {
 
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                if (game.isFinished()) {
-                    game.setFinished(false);
-                    game.setScreen(new GameScreen(game, false));
-                    dispose();
-                }
                 if (!game.isFinished()) {
                     touchedDot = (Dot) stage.hit(event.getStageX(), event.getStageY(), true);
                     if (touchedDot != null) {
@@ -89,6 +85,12 @@ public class GameScreen implements Screen {
             }
 
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                if (game.isFinished()) {
+                    game.setFinished(false);
+                    game.setScreen(new MainMenuScreen(game));
+                    dispose();
+                }
+
                 if (!game.isFinished()) {
                     if (touchedDot != null)
                         touchedDot.setTouched(false);

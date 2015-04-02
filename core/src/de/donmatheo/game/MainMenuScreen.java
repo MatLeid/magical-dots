@@ -5,14 +5,18 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import de.donmatheo.game.ui.PlayHardcoreButton;
 import de.donmatheo.game.ui.PlayNormalButton;
 import de.donmatheo.game.ui.TitleText;
+
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
 
 /**
  * Created by donmatheo on 19.11.2014.
@@ -53,11 +57,19 @@ public class MainMenuScreen implements Screen {
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 Actor touched = stage.hit(event.getStageX(), event.getStageY(), true);
                 if (touched instanceof PlayNormalButton) {
-                    game.setScreen(new GameScreen(game, false));
-                    dispose();
+                    touched.addAction(Actions.sequence(Actions.scaleTo(0.98f, 0.98f, 0.1f),Actions.scaleTo(1f, 1f, 0.5f, Interpolation.elasticOut), run(new Runnable() {
+                        public void run() {
+                            game.setScreen(new GameScreen(game, false));
+                            dispose();
+                        }
+                    })));
                 } else if (touched instanceof PlayHardcoreButton) {
-                    game.setScreen(new GameScreen(game, true));
-                    dispose();
+                        touched.addAction(Actions.sequence(Actions.scaleTo(0.98f, 0.98f, 0.1f),Actions.scaleTo(1f, 1f, 0.5f, Interpolation.elasticOut), run(new Runnable() {
+                            public void run() {
+                                game.setScreen(new GameScreen(game, true));
+                                dispose();
+                            }
+                        })));
                 }
             }
         });
@@ -90,10 +102,12 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void pause() {
+        music.pause();
     }
 
     @Override
     public void resume() {
+        music.play();
     }
 
     @Override
