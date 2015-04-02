@@ -12,14 +12,12 @@ import de.donmatheo.game.MagicalDots;
 /**
  * Created by donmatheo on 31.03.2015.
  */
-public class Ending extends Actor {
+public class EndingText extends Actor {
     private final MagicalDots game;
     private final ShapeRenderer renderer;
     OrthographicCamera camera;
 
-    
-
-    public Ending(MagicalDots game, OrthographicCamera camera) {
+    public EndingText(MagicalDots game, OrthographicCamera camera) {
         this.game = game;
         this.camera = camera;
         renderer = new ShapeRenderer();
@@ -33,11 +31,6 @@ public class Ending extends Actor {
         renderer.rect(0, 0, camera.viewportWidth, camera.viewportHeight);
         renderer.end();
         Gdx.gl.glDisable(GL20.GL_BLEND);
-
-        game.batch.begin();
-        game.titlefont.draw(game.batch, "Congratulations", 80, camera.viewportHeight / 2 + 60);
-        game.mainfont.draw(game.batch, "Tap anywhere to restart", 250, camera.viewportHeight / 2 - 180);
-        game.batch.end();
 
     }
 

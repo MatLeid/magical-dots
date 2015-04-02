@@ -19,7 +19,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import de.donmatheo.game.entities.Dot;
 import de.donmatheo.game.input.MyGestureHandler;
 import de.donmatheo.game.input.MyInputProcessor;
-import de.donmatheo.game.ui.Ending;
+import de.donmatheo.game.ui.EndingText;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -27,7 +27,7 @@ import java.util.Random;
 public class GameScreen implements Screen {
 
     private final MagicalDots game;
-    private final Ending ending;
+    private final EndingText endingText;
     private final FitViewport viewport;
 
     private OrthographicCamera camera;
@@ -50,22 +50,19 @@ public class GameScreen implements Screen {
     private MyGestureHandler gestureHandler;
     private MyInputProcessor inputProcessor;
 
-    private final float screen_width = Gdx.graphics.getWidth();
-    private final float screen_height = Gdx.graphics.getHeight();
-
     private Dot touchedDot;
-
 
     private ArrayList<Music> songs;
 
     public GameScreen(final MagicalDots game, boolean hardcoreMode) {
+        System.out.println("hardcoremode: " + hardcoreMode);
         this.game = game;
         // setup camera
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, screen_width, screen_height);
+        camera.setToOrtho(false, game.getScreen_width(), game.getScreen_height());
 
         // setup viewport and stage
-        viewport = new FitViewport(800, 480);
+        viewport = new FitViewport(game.getScreen_width(), game.getScreen_height());
         viewport.setCamera(camera);
         stage = new Stage(viewport);
 
@@ -121,9 +118,9 @@ public class GameScreen implements Screen {
         dotController.addAllToStage(stage);
 
         // setup Ending screen actor
-        ending = new Ending(game, camera);
-        stage.addActor(ending);
-        ending.addAction(Actions.hide());
+        endingText = new EndingText(game, camera);
+        stage.addActor(endingText);
+        endingText.addAction(Actions.hide());
 
     }
 
@@ -159,7 +156,7 @@ public class GameScreen implements Screen {
         stage.draw();
 
         if (game.isFinished()) {
-            ending.addAction(Actions.show());
+            endingText.addAction(Actions.show());
         }
     }
 

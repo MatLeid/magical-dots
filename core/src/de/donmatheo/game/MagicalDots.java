@@ -15,28 +15,18 @@ public class MagicalDots extends Game {
     public static final Color DARKGREY = parseColor("202020", 1);
     public static final Color YELLOW = parseColor("FFF675", 1);
     public static final Color BLUE = parseColor("14D6D6", 1);
-    public static final Color LIGHTBLUE = parseColor("BAFFFF", 1);
-
-    public SpriteBatch batch;
-    public BitmapFont mainfont;
-    public BitmapFont titlefont;
 
     private boolean finished;
 
-    public MainMenuScreen getMainMenuScreen() {
-        return mainMenuScreen;
-    }
-
-    private MainMenuScreen mainMenuScreen;
+    private  float screen_width;
+    private  float screen_height;
 
 
     public void create() {
-        batch = new SpriteBatch();
-        mainfont = new BitmapFont(Gdx.files.internal("mainfont.fnt"), Gdx.files.internal("mainfont.png"),false);
-        titlefont = new BitmapFont(Gdx.files.internal("titlefont.fnt"), Gdx.files.internal("titlefont.png"),false);
+        screen_width = Gdx.graphics.getWidth();
+        screen_height = Gdx.graphics.getHeight();
 
-        mainMenuScreen = new MainMenuScreen((this));
-        setScreen(mainMenuScreen);
+        setScreen(new MainMenuScreen(this));
     }
 
     public void render() {
@@ -44,8 +34,6 @@ public class MagicalDots extends Game {
     }
 
     public void dispose() {
-        batch.dispose();
-        mainfont.dispose();
     }
 
     public static Color parseColor(String hex, float alpha) {
@@ -67,5 +55,13 @@ public class MagicalDots extends Game {
 
     public void setFinished(boolean finished) {
         this.finished = finished;
+    }
+
+    public float getScreen_height() {
+        return screen_height;
+    }
+
+    public float getScreen_width() {
+        return screen_width;
     }
 }
