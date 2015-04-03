@@ -24,6 +24,8 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
 public class MainMenuScreen implements Screen {
 
     final MagicalDots game;
+    private PlayHardcoreButton playHardcoreButton;
+    private PlayNormalButton playNormalButton;
     private Stage stage;
     private Music music;
     OrthographicCamera camera;
@@ -34,17 +36,17 @@ public class MainMenuScreen implements Screen {
 
         this.game = game;
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, game.getScreen_width(), game.getScreen_height());
 
-        // setup viewport and stage
-        viewport = new FitViewport(game.getScreen_width(), game.getScreen_height());
-        viewport.setCamera(camera);
+        setupViewportAndCamera(game.getScreen_width(), game.getScreen_height());
+
         stage = new Stage(viewport);
+
         Gdx.input.setInputProcessor(stage);
 
-        TitleText titleText = new TitleText(game, camera);
-        PlayNormalButton playNormalButton = new PlayNormalButton(game, camera);
-        PlayHardcoreButton playHardcoreButton = new PlayHardcoreButton(game, camera);
+        TitleText titleText = new TitleText(camera);
+        playNormalButton = new PlayNormalButton(camera);
+        playHardcoreButton = new PlayHardcoreButton(camera);
+
         stage.addActor(titleText);
         stage.addActor(playNormalButton);
         stage.addActor(playHardcoreButton);
@@ -76,6 +78,21 @@ public class MainMenuScreen implements Screen {
 
     }
 
+    private void setupViewportAndCamera(double width, float height) {
+        if (width<1280) {
+            camera.setToOrtho(false, 800, 480);
+            viewport = new FitViewport(800, 480);
+        } else { // set to WXGA resolution (1280x800)
+            camera.setToOrtho(false, 1280, 800);
+            viewport = new FitViewport(1280, 800);
+        }
+
+        //important command to keep aspec ratio
+        viewport.update((int)width, (int)height);
+
+        viewport.setCamera(camera);
+    }
+
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(MagicalDots.DARKGREY.r, MagicalDots.DARKGREY.g, MagicalDots.DARKGREY.b, 1);
@@ -87,7 +104,9 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        viewport.update(width, height);
+        setupViewportAndCamera(width,height);
+        playNormalButton.calculatePosition(camera.viewportWidth, camera.viewportHeight);
+        playHardcoreButton.calculatePosition(camera.viewportWidth, camera.viewportHeight);
     }
 
     @Override

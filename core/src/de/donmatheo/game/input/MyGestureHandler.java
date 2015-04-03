@@ -5,17 +5,20 @@ import com.badlogic.gdx.input.GestureDetector;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import de.donmatheo.game.GameScreen;
+import de.donmatheo.game.MagicalDots;
 
 /**
  * Created by donmatheo on 04.02.2015.
  */
 public class MyGestureHandler implements GestureDetector.GestureListener {
 
+    private final MagicalDots game;
     private GameScreen gameScreen;
     private float initialScale;
 
-    public MyGestureHandler(GameScreen gameScreen) {
+    public MyGestureHandler(GameScreen gameScreen, MagicalDots game) {
         this.gameScreen = gameScreen;
+        this.game = game;
     }
 
     @Override
@@ -35,7 +38,7 @@ public class MyGestureHandler implements GestureDetector.GestureListener {
 
     @Override
     public boolean pan(float x, float y, float deltaX, float deltaY) {
-        if (gameScreen.getTouchedDot() == null) {
+        if (gameScreen.getTouchedDot() == null && !game.isFinished() ) {
             OrthographicCamera camera = gameScreen.getCamera();
 
             camera.translate(-deltaX, deltaY);
@@ -80,7 +83,8 @@ public class MyGestureHandler implements GestureDetector.GestureListener {
         float ratio = initialDistance / distance;
 
         //Clamp range and set zoom
-        gameScreen.setZoom(MathUtils.clamp(initialScale * ratio, gameScreen.getMinZoom(), gameScreen.getMaxZoom()));
+        if (!game.isFinished())
+            gameScreen.setZoom(MathUtils.clamp(initialScale * ratio, gameScreen.getMinZoom(), gameScreen.getMaxZoom()));
 
         return true;
     }

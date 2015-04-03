@@ -55,7 +55,7 @@ public class GameScreen implements Screen {
     private ArrayList<Music> songs;
 
     public GameScreen(final MagicalDots game, boolean hardcoreMode) {
-        System.out.println("hardcoremode: " + hardcoreMode);
+
         this.game = game;
 
         // setup camera
@@ -120,7 +120,7 @@ public class GameScreen implements Screen {
         dotController.addAllToStage(stage);
 
         // setup Ending screen actor
-        endingText = new EndingText(game, camera);
+        endingText = new EndingText(camera);
         stage.addActor(endingText);
         endingText.addAction(Actions.hide());
 
@@ -129,8 +129,8 @@ public class GameScreen implements Screen {
     public void initaliseInputProcessors() {
         inputMultiplexer = new InputMultiplexer();
         Gdx.input.setInputProcessor(inputMultiplexer);
-        gestureHandler = new MyGestureHandler(this);
-        inputProcessor = new MyInputProcessor(this);
+        gestureHandler = new MyGestureHandler(this, game);
+        inputProcessor = new MyInputProcessor(this, game);
         inputMultiplexer.addProcessor(inputProcessor);
         inputMultiplexer.addProcessor(new GestureDetector(gestureHandler));
         inputMultiplexer.addProcessor(stage);

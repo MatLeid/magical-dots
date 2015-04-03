@@ -5,24 +5,23 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
 /**
  * Created by donmatheo on 31.03.2015.
  */
-public class PlayHardcoreButton extends Actor {
-    private final Texture startButtonImageWVGA;
-    private final Texture startButtonImageWXGA;
+public class BackToMenuButton extends Actor {
+    private final Texture buttonImageWVGA;
+    private final Texture buttonImageWXGA;
     OrthographicCamera camera;
 
 
-    public PlayHardcoreButton(OrthographicCamera camera) {
+    public BackToMenuButton(OrthographicCamera camera) {
         this.camera = camera;
 
-        startButtonImageWXGA = new Texture(Gdx.files.internal("button_hardcore_WXGA.png"));
-        startButtonImageWVGA = new Texture(Gdx.files.internal("button_hardcore_WVGA.png"));
+        buttonImageWXGA = new Texture(Gdx.files.internal("button_normal_WXGA.png"));
+        buttonImageWVGA = new Texture(Gdx.files.internal("button_normal_WVGA.png"));
 
         calculatePosition(camera.viewportWidth, camera.viewportHeight);
 
@@ -33,14 +32,14 @@ public class PlayHardcoreButton extends Actor {
     public void calculatePosition(float viewportWidth, float viewportHeight) {
         float xMiddle = viewportWidth/2;
         float yLowerThird = viewportHeight / 3;
-        float imageWidth = startButtonImageWVGA.getWidth();
-        float imageHeight = startButtonImageWVGA.getHeight();
+        float imageWidth = buttonImageWVGA.getWidth();
+        float imageHeight = buttonImageWVGA.getHeight();
 
         if (viewportWidth>=1280) {
-            imageWidth = startButtonImageWXGA.getWidth();
-            imageHeight = startButtonImageWXGA.getHeight();
+            imageWidth = buttonImageWXGA.getWidth();
+            imageHeight = buttonImageWXGA.getHeight();
         }
-        setPosition(xMiddle + imageWidth * 0.25f, yLowerThird-imageHeight);
+        setPosition(xMiddle - imageWidth * .5f, yLowerThird-imageHeight);
         setBounds(getX(), getY(), imageWidth, imageHeight);
     }
 
@@ -53,11 +52,11 @@ public class PlayHardcoreButton extends Actor {
     public void draw(Batch batch, float parentAlpha) {
         batch.setColor(this.getColor());
         if (camera.viewportWidth < 1280)
-            batch.draw(startButtonImageWVGA, getX(), getY(), startButtonImageWVGA.getWidth()*getScaleX(), startButtonImageWVGA.getHeight()*getScaleY());
+            batch.draw(buttonImageWVGA, getX(), getY(), buttonImageWVGA.getWidth()*getScaleX(), buttonImageWVGA.getHeight()*getScaleY());
         else
-            batch.draw(startButtonImageWXGA, getX(), getY(), startButtonImageWXGA.getWidth()*getScaleX(), startButtonImageWXGA.getHeight()*getScaleY());
-
+            batch.draw(buttonImageWXGA, getX(), getY(), buttonImageWXGA.getWidth()*getScaleX(), buttonImageWXGA.getHeight()*getScaleY());
     }
+
 
 
 }

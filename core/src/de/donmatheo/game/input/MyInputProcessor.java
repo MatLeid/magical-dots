@@ -2,6 +2,7 @@ package de.donmatheo.game.input;
 
 import com.badlogic.gdx.InputProcessor;
 import de.donmatheo.game.GameScreen;
+import de.donmatheo.game.MagicalDots;
 
 /**
  * Created by donmatheo on 04.02.2015.
@@ -9,10 +10,12 @@ import de.donmatheo.game.GameScreen;
 
 public class MyInputProcessor implements InputProcessor {
 
+    private final MagicalDots game;
     private GameScreen gameScreen;
 
-    public MyInputProcessor(GameScreen gameScreen) {
+    public MyInputProcessor(GameScreen gameScreen, MagicalDots game) {
         this.gameScreen = gameScreen;
+        this.game = game;
     }
 
     @Override
@@ -53,14 +56,17 @@ public class MyInputProcessor implements InputProcessor {
     @Override
     public boolean scrolled(int amount) {
 
-        //Zoom out
-        if (amount > 0 && gameScreen.getZoom() < gameScreen.getMaxZoom()) {
-            gameScreen.setZoom(gameScreen.getZoom() + 0.1f);
-        }
+        if (!game.isFinished()) {
 
-        //Zoom in
-        if (amount < 0 && gameScreen.getZoom() > gameScreen.getMinZoom()) {
-            gameScreen.setZoom(gameScreen.getZoom() - 0.1f);
+            //Zoom out
+            if (amount > 0 && gameScreen.getZoom() < gameScreen.getMaxZoom()) {
+                gameScreen.setZoom(gameScreen.getZoom() + 0.1f);
+            }
+
+            //Zoom in
+            if (amount < 0 && gameScreen.getZoom() > gameScreen.getMinZoom()) {
+                gameScreen.setZoom(gameScreen.getZoom() - 0.1f);
+            }
         }
 
         return true;

@@ -1,11 +1,9 @@
 package de.donmatheo.game.ui;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import de.donmatheo.game.MagicalDots;
 
@@ -13,24 +11,23 @@ import de.donmatheo.game.MagicalDots;
  * Created by donmatheo on 31.03.2015.
  */
 public class EndingText extends Actor {
-    private final MagicalDots game;
-    private final ShapeRenderer renderer;
-    OrthographicCamera camera;
+    private final OrthographicCamera camera;
+    private final Texture endingImageWXGA;
+    private final Texture endingImageWVGA;
 
-    public EndingText(MagicalDots game, OrthographicCamera camera) {
-        this.game = game;
+
+    public EndingText( OrthographicCamera camera) {
         this.camera = camera;
-        renderer = new ShapeRenderer();
+        endingImageWXGA = new Texture(Gdx.files.internal("background_ending_WXGA.png"));
+        endingImageWVGA = new Texture(Gdx.files.internal("background_ending_WVGA.png"));
+
     }
 
     public void draw(Batch batch, float parentAlpha) {
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        renderer.begin(ShapeRenderer.ShapeType.Filled);
-        renderer.setColor(new Color(0, 0, 0, 0.4f));
-        renderer.rect(0, 0, camera.viewportWidth, camera.viewportHeight);
-        renderer.end();
-        Gdx.gl.glDisable(GL20.GL_BLEND);
+        if (camera.viewportWidth<1280)
+            batch.draw(endingImageWVGA, getX(), getY(), camera.viewportWidth, camera.viewportHeight);
+        else
+            batch.draw(endingImageWXGA, getX(), getY(), camera.viewportWidth, camera.viewportHeight);
 
     }
 

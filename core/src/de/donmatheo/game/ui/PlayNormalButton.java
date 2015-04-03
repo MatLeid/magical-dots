@@ -5,30 +5,42 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import de.donmatheo.game.MagicalDots;
 
 /**
  * Created by donmatheo on 31.03.2015.
  */
 public class PlayNormalButton extends Actor {
-    private final MagicalDots game;
-    private final Texture startButtonImage;
+    private final Texture startButtonImageWVGA;
+    private final Texture startButtonImageWXGA;
     OrthographicCamera camera;
 
 
-    public PlayNormalButton(MagicalDots game, OrthographicCamera camera) {
-        this.game = game;
+    public PlayNormalButton(OrthographicCamera camera) {
         this.camera = camera;
 
-        startButtonImage = new Texture(Gdx.files.internal("button_start.png"));
-        setPosition(camera.viewportWidth / 2 - startButtonImage.getWidth(), 0);
-        setBounds(getX(), getY(), startButtonImage.getWidth(), startButtonImage.getHeight());
+        startButtonImageWXGA = new Texture(Gdx.files.internal("button_normal_WXGA.png"));
+        startButtonImageWVGA = new Texture(Gdx.files.internal("button_normal_WVGA.png"));
+
+        calculatePosition(camera.viewportWidth, camera.viewportHeight);
+
         setColor(new Color(1f, 1f, 1f, 0));
-        addAction(Actions.fadeIn(1f));
-        addAction(Actions.moveTo(camera.viewportWidth / 2 - startButtonImage.getWidth(), camera.viewportHeight / 2 - 140, 1f, Interpolation.elasticOut));
+        addAction(Actions.fadeIn(.5f));
+    }
+
+    public void calculatePosition(float viewportWidth, float viewportHeight) {
+        float xMiddle = viewportWidth/2;
+        float yLowerThird = viewportHeight / 3;
+        float imageWidth = startButtonImageWVGA.getWidth();
+        float imageHeight = startButtonImageWVGA.getHeight();
+
+        if (viewportWidth>=1280) {
+            imageWidth = startButtonImageWXGA.getWidth();
+            imageHeight = startButtonImageWXGA.getHeight();
+        }
+        setPosition(xMiddle - imageWidth * 1.25f, yLowerThird-imageHeight);
+        setBounds(getX(), getY(), imageWidth, imageHeight);
     }
 
     @Override
@@ -39,7 +51,11 @@ public class PlayNormalButton extends Actor {
 
     public void draw(Batch batch, float parentAlpha) {
         batch.setColor(this.getColor());
-        batch.draw(startButtonImage, getX(), getY(), startButtonImage.getWidth()*getScaleX(), startButtonImage.getHeight()*getScaleY());
+        if (camera.viewportWidth < 1280)
+            batch.draw(startButtonImageWVGA, getX(), getY(), startButtonImageWVGA.getWidth()*getScaleX(), startButtonImageWVGA.getHeight()*getScaleY());
+        else
+            batch.draw(startButtonImageWXGA, getX(), getY(), startButtonImageWXGA.getWidth()*getScaleX(), startButtonImageWXGA.getHeight()*getScaleY());
     }
+
 
 }

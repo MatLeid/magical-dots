@@ -5,25 +5,28 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
-import de.donmatheo.game.MagicalDots;
 
 /**
  * Created by donmatheo on 31.03.2015.
  */
 public class TitleText extends Actor {
-    private final MagicalDots game;    OrthographicCamera camera;
-    private Texture titleImage;
+    private final  OrthographicCamera camera;
+    private final Texture titleImageWXGA;
+    private final Texture titleImageWVGA;
 
 
-    public TitleText(MagicalDots game, OrthographicCamera camera) {
-        this.game = game;
+    public TitleText( OrthographicCamera camera) {
         this.camera = camera;
-        titleImage = new Texture(Gdx.files.internal("title.png"));
+        titleImageWVGA = new Texture(Gdx.files.internal("background_WVGA.png"));
+        titleImageWXGA = new Texture(Gdx.files.internal("background_WXGA.png"));
 
     }
 
     public void draw(Batch batch, float parentAlpha) {
-        batch.draw(titleImage, getX(), getY(), camera.viewportWidth, camera.viewportHeight);
+        if (camera.viewportWidth >= 1280)
+            batch.draw(titleImageWXGA, getX(), getY(), camera.viewportWidth, camera.viewportHeight);
+        else
+            batch.draw(titleImageWVGA, getX(), getY(), camera.viewportWidth, camera.viewportHeight);
     }
 
 }
