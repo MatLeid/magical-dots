@@ -67,7 +67,4 @@ public class MagicalDots extends Game {
         return screen_width;
     }
 
-    public MainMenuScreen getMenuScreen() {
-        return menuScreen;
-    }
 }
