@@ -1,6 +1,7 @@
 package de.donmatheo.game;
 
 import box2dLight.RayHandler;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import de.donmatheo.game.entities.Dot;
@@ -17,6 +18,7 @@ public class DotController {
     private Random random = new Random();
 
     public Array<Dot> createDots(int numberOfDots, RayHandler rayHandler) {
+        Dot.multiplier = 500f;
         for (int i = 0; i < numberOfDots; i++) {
             Dot dot = new Dot(rayHandler);
             dots.add(dot);
@@ -57,6 +59,17 @@ public class DotController {
         // afterwards add all dots to the stage
         for (Dot dot : dots) {
             stage.addActor(dot);
+            dot.addListener(new StableListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    // Timer changes depending on the count of stable relations, so they have to be updated as soon as
+                    // a relation gets stable
+                    for (int i = 0; i < dots.size; i++) {
+                        dots.get(i).removeDotAction();
+                        dots.get(i).addDotAction();
+                    }
+                }
+            });
         }
     }
 }

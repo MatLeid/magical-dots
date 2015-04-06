@@ -14,12 +14,11 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
-import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
+import de.donmatheo.game.StableListener;
 
 import java.util.Random;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.removeAction;
 
 
 /**
@@ -35,11 +34,12 @@ public class Dot extends Actor {
     private boolean touched;
     private Vector2 center;
 
-    private static Sound getsStable = Gdx.audio.newSound(Gdx.files.internal("sound/gets-stable.ogg"));
+    private static Sound getsStableSound = Gdx.audio.newSound(Gdx.files.internal("sound/gets-stable.ogg"));
     private Texture dotImageBlue;
     private Texture dotImageYellow;
+    public static float multiplier;
 
-    private SequenceAction forever;
+    private RepeatAction forever;
 
     public Dot(RayHandler rayHandler) {
         pointLight = new PointLight(rayHandler, 200, Color.ORANGE, 250, getX(), getY());
@@ -55,16 +55,17 @@ public class Dot extends Actor {
         addAction(Actions.fadeIn(1.2f));
         addAction(Actions.scaleTo(1f, 1f, 2f, Interpolation.elasticOut));
         addDotAction();
-
     }
 
-    private void addDotAction() {
-        forever = sequence(delay(3f), Actions.moveBy(randomFloat(), randomFloat(), 0.8f, Interpolation.bounceOut), run(new Runnable() {
-            public void run () {
-                addDotAction();
-            }
-        }));
-        addAction(forever);
+    public void addDotAction() {
+        if(!isTouched() && !pointLight.isActive()) {
+            forever = forever(sequence(delay(multiplier), Actions.moveBy(randomFloat(), randomFloat(), 0.8f, Interpolation.bounceOut)));
+            addAction(forever);
+        }
+    }
+
+    public void removeDotAction(){
+        removeAction(forever);
     }
 
     private float randomFloat() {
@@ -73,10 +74,6 @@ public class Dot extends Actor {
         if(rand.nextBoolean())
             sign = -1;
         return rand.nextInt(50) * sign;
-    }
-
-    private void removeDotAction(){
-        removeAction(forever);
     }
 
     @Override
@@ -89,7 +86,7 @@ public class Dot extends Actor {
     public void draw(Batch batch, float parentAlpha) {
         batch.setProjectionMatrix(getStage().getCamera().combined);
         batch.setColor(this.getColor());
-        if (hasIsoscelesRelations()) {
+        if (pointLight.isActive()) {
             batch.draw(dotImageYellow, getX(), getY(), 2 * DEFAULTRADIUS * getScaleX(), 2 * DEFAULTRADIUS * getScaleY());
         } else {
             batch.draw(dotImageBlue, getX(), getY(), 2 * DEFAULTRADIUS * getScaleX(), 2 * DEFAULTRADIUS * getScaleY());
@@ -99,20 +96,21 @@ public class Dot extends Actor {
     public boolean hasIsoscelesRelations() {
         double dist1 = distance(relation1.getTarget());
         double dist2 = distance(relation2.getTarget());
-
         double median = (dist1 + dist2) / 2;
         double absoluteDiff = Math.abs(dist1 - dist2);
         if (absoluteDiff / median < 0.1) {
             if(!pointLight.isActive()) {
-                getsStable.play();
-                removeDotAction();
+                pointLight.setActive(true);
+                multiplier /= 5;
+                fire(new StableListener.ChangeEvent());
+                getsStableSound.play();
             }
-            pointLight.setActive(true);
             return true;
         } else {
             if(pointLight.isActive()) {
                 pointLight.setActive(false);
-                addDotAction();
+                multiplier *= 5;
+                fire(new StableListener.ChangeEvent());
             }
             return false;
         }
@@ -173,11 +171,13 @@ public class Dot extends Actor {
     }
 
     public void setTouched(boolean touched) {
-        if(touched)
-            removeDotAction();
-        else
-            addDotAction();
         this.touched = touched;
+        if(touched) {
+            removeDotAction();
+        }
+        else {
+            addDotAction();
+        }
     }
 
     public Vector2 getCenter() {

@@ -159,6 +159,8 @@ public class GameScreen implements Screen {
 
         if (game.isFinished()) {
             endingText.addAction(Actions.show());
+            for(Dot dot : dots)
+                dot.clearActions();
         }
     }
 
