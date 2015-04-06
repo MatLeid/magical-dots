@@ -13,12 +13,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
-import de.donmatheo.game.StableListener;
-
-import java.util.Random;
-
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 
 
 /**
@@ -26,19 +20,17 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
  */
 public class Dot extends Actor {
 
-    public static float movementTimer;
     public static int DEFAULT_RADIUS = 35;
-    private static Sound getsStableSound = Gdx.audio.newSound(Gdx.files.internal("sound/gets-stable.ogg"));
+    protected static Sound getsStableSound = Gdx.audio.newSound(Gdx.files.internal("sound/gets-stable.ogg"));
 
-    private final PointLight pointLight;
+    protected final PointLight pointLight;
+    protected Relation relation1;
+    protected Relation relation2;
     private Circle circleBounds;
-    private Relation relation1;
-    private Relation relation2;
     private Vector2 center;
     private Texture dotImageBlue;
     private Texture dotImageYellow;
-    private RepeatAction forever;
-    private boolean touched;
+    protected boolean touched;
 
     public Dot(RayHandler rayHandler) {
         pointLight = new PointLight(rayHandler, 200, Color.ORANGE, 250, getX(), getY());
@@ -53,27 +45,8 @@ public class Dot extends Actor {
         dotImageYellow = new Texture(Gdx.files.internal("dot_yellow.png"));
         addAction(Actions.fadeIn(1.2f));
         addAction(Actions.scaleTo(1f, 1f, 2f, Interpolation.elasticOut));
-        addDotAction();
     }
 
-    public void addDotAction() {
-        if (!isTouched() && !isStable()) {
-            forever = forever(sequence(delay(movementTimer), Actions.moveBy(randomFloat(), randomFloat(), 0.8f, Interpolation.bounceOut)));
-            addAction(forever);
-        }
-    }
-
-    public void removeDotAction() {
-        removeAction(forever);
-    }
-
-    private float randomFloat() {
-        int sign = 1;
-        Random rand = new Random();
-        if (rand.nextBoolean())
-            sign = -1;
-        return rand.nextInt(50) * sign;
-    }
 
     @Override
     public void act(float delta) {
@@ -100,16 +73,12 @@ public class Dot extends Actor {
         if (absoluteDiff / median < 0.1) {
             if (!isStable()) {
                 pointLight.setActive(true);
-                movementTimer /= 5;
-                fire(new StableListener.ChangeEvent());
                 getsStableSound.play();
             }
             return true;
         } else {
             if (isStable()) {
                 pointLight.setActive(false);
-                movementTimer *= 5;
-                fire(new StableListener.ChangeEvent());
             }
             return false;
         }
@@ -119,7 +88,7 @@ public class Dot extends Actor {
         return pointLight.isActive();
     }
 
-    private double distance(Dot neighbour) {
+    protected double distance(Dot neighbour) {
         double dx = getX() - neighbour.getX();         //horizontal difference
         double dy = getY() - neighbour.getY();         //vertical difference
         return Math.sqrt(dx * dx + dy * dy);           //distance using Pythagoras theorem
@@ -175,11 +144,6 @@ public class Dot extends Actor {
 
     public void setTouched(boolean touched) {
         this.touched = touched;
-        if (touched) {
-            removeDotAction();
-        } else {
-            addDotAction();
-        }
     }
 
     public Vector2 getCenter() {

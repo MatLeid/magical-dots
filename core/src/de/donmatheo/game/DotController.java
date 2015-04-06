@@ -5,6 +5,7 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import de.donmatheo.game.entities.Dot;
+import de.donmatheo.game.entities.HardcoreDot;
 import de.donmatheo.game.entities.Relation;
 
 import java.util.Random;
@@ -17,12 +18,14 @@ public class DotController {
     private Array<Dot> dots = new Array<Dot>();
     private Random random = new Random();
 
-    public Array<Dot> createDots(int numberOfDots, RayHandler rayHandler) {
-        Dot.movementTimer = 500f;
+    public Array<Dot> createDots(int numberOfDots, RayHandler rayHandler, boolean hardcore) {
         for (int i = 0; i < numberOfDots; i++) {
-            Dot dot = new Dot(rayHandler);
+            Dot dot = hardcore == true ? new HardcoreDot(rayHandler) : new Dot(rayHandler);
             dots.add(dot);
         }
+        if(hardcore)
+            setMovementListener();
+
         return dots;
     }
 
@@ -57,16 +60,22 @@ public class DotController {
             stage.addActor(dot.getRelation2());
         }
         // afterwards add all dots to the stage
-        for (Dot dot : dots) {
+        for (Dot dot : dots)
             stage.addActor(dot);
+    }
+
+    private void setMovementListener (){
+        HardcoreDot.movementTimer = 500;
+        for (Dot dot : dots) {
             dot.addListener(new StableListener() {
                 @Override
                 public void changed(ChangeEvent event, Actor actor) {
                     // Timer changes depending on the count of stable relations, so they have to be updated as soon as
                     // a relation gets stable
                     for (int i = 0; i < dots.size; i++) {
-                        dots.get(i).removeDotAction();
-                        dots.get(i).addDotAction();
+                        HardcoreDot dot = (HardcoreDot) dots.get(i);
+                        dot.removeDotAction();
+                        dot.addDotAction();
                     }
                 }
             });
