@@ -57,7 +57,7 @@ public class Dot extends Actor {
     }
 
     public void addDotAction() {
-        if (!isTouched() && !pointLight.isActive()) {
+        if (!isTouched() && !isStable()) {
             forever = forever(sequence(delay(movementTimer), Actions.moveBy(randomFloat(), randomFloat(), 0.8f, Interpolation.bounceOut)));
             addAction(forever);
         }
@@ -85,7 +85,7 @@ public class Dot extends Actor {
     public void draw(Batch batch, float parentAlpha) {
         batch.setProjectionMatrix(getStage().getCamera().combined);
         batch.setColor(this.getColor());
-        if (pointLight.isActive()) {
+        if (isStable()) {
             batch.draw(dotImageYellow, getX(), getY(), 2 * DEFAULT_RADIUS * getScaleX(), 2 * DEFAULT_RADIUS * getScaleY());
         } else {
             batch.draw(dotImageBlue, getX(), getY(), 2 * DEFAULT_RADIUS * getScaleX(), 2 * DEFAULT_RADIUS * getScaleY());
@@ -98,7 +98,7 @@ public class Dot extends Actor {
         double median = (dist1 + dist2) / 2;
         double absoluteDiff = Math.abs(dist1 - dist2);
         if (absoluteDiff / median < 0.1) {
-            if (!pointLight.isActive()) {
+            if (!isStable()) {
                 pointLight.setActive(true);
                 movementTimer /= 5;
                 fire(new StableListener.ChangeEvent());
@@ -106,13 +106,17 @@ public class Dot extends Actor {
             }
             return true;
         } else {
-            if (pointLight.isActive()) {
+            if (isStable()) {
                 pointLight.setActive(false);
                 movementTimer *= 5;
                 fire(new StableListener.ChangeEvent());
             }
             return false;
         }
+    }
+
+    public boolean isStable(){
+        return pointLight.isActive();
     }
 
     private double distance(Dot neighbour) {
