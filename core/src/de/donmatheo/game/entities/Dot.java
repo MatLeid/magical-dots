@@ -26,27 +26,26 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
  */
 public class Dot extends Actor {
 
-    public static int DEFAULTRADIUS = 35;
+    public static float movementTimer;
+    public static int DEFAULT_RADIUS = 35;
+    private static Sound getsStableSound = Gdx.audio.newSound(Gdx.files.internal("sound/gets-stable.ogg"));
+
     private final PointLight pointLight;
     private Circle circleBounds;
     private Relation relation1;
     private Relation relation2;
-    private boolean touched;
     private Vector2 center;
-
-    private static Sound getsStableSound = Gdx.audio.newSound(Gdx.files.internal("sound/gets-stable.ogg"));
     private Texture dotImageBlue;
     private Texture dotImageYellow;
-    public static float multiplier;
-
     private RepeatAction forever;
+    private boolean touched;
 
     public Dot(RayHandler rayHandler) {
         pointLight = new PointLight(rayHandler, 200, Color.ORANGE, 250, getX(), getY());
         pointLight.setActive(false);
-        circleBounds = new Circle(DEFAULTRADIUS, DEFAULTRADIUS, DEFAULTRADIUS);
+        circleBounds = new Circle(DEFAULT_RADIUS, DEFAULT_RADIUS, DEFAULT_RADIUS);
         center = new Vector2();
-        setBounds(0, 0, DEFAULTRADIUS * 2, DEFAULTRADIUS * 2);
+        setBounds(0, 0, DEFAULT_RADIUS * 2, DEFAULT_RADIUS * 2);
         setOrigin(0, 0);
         setScale(0.1f);
         setColor(new Color(1f, 1f, 1f, 0f));
@@ -58,20 +57,20 @@ public class Dot extends Actor {
     }
 
     public void addDotAction() {
-        if(!isTouched() && !pointLight.isActive()) {
-            forever = forever(sequence(delay(multiplier), Actions.moveBy(randomFloat(), randomFloat(), 0.8f, Interpolation.bounceOut)));
+        if (!isTouched() && !pointLight.isActive()) {
+            forever = forever(sequence(delay(movementTimer), Actions.moveBy(randomFloat(), randomFloat(), 0.8f, Interpolation.bounceOut)));
             addAction(forever);
         }
     }
 
-    public void removeDotAction(){
+    public void removeDotAction() {
         removeAction(forever);
     }
 
     private float randomFloat() {
         int sign = 1;
         Random rand = new Random();
-        if(rand.nextBoolean())
+        if (rand.nextBoolean())
             sign = -1;
         return rand.nextInt(50) * sign;
     }
@@ -87,9 +86,9 @@ public class Dot extends Actor {
         batch.setProjectionMatrix(getStage().getCamera().combined);
         batch.setColor(this.getColor());
         if (pointLight.isActive()) {
-            batch.draw(dotImageYellow, getX(), getY(), 2 * DEFAULTRADIUS * getScaleX(), 2 * DEFAULTRADIUS * getScaleY());
+            batch.draw(dotImageYellow, getX(), getY(), 2 * DEFAULT_RADIUS * getScaleX(), 2 * DEFAULT_RADIUS * getScaleY());
         } else {
-            batch.draw(dotImageBlue, getX(), getY(), 2 * DEFAULTRADIUS * getScaleX(), 2 * DEFAULTRADIUS * getScaleY());
+            batch.draw(dotImageBlue, getX(), getY(), 2 * DEFAULT_RADIUS * getScaleX(), 2 * DEFAULT_RADIUS * getScaleY());
         }
     }
 
@@ -99,17 +98,17 @@ public class Dot extends Actor {
         double median = (dist1 + dist2) / 2;
         double absoluteDiff = Math.abs(dist1 - dist2);
         if (absoluteDiff / median < 0.1) {
-            if(!pointLight.isActive()) {
+            if (!pointLight.isActive()) {
                 pointLight.setActive(true);
-                multiplier /= 5;
+                movementTimer /= 5;
                 fire(new StableListener.ChangeEvent());
                 getsStableSound.play();
             }
             return true;
         } else {
-            if(pointLight.isActive()) {
+            if (pointLight.isActive()) {
                 pointLight.setActive(false);
-                multiplier *= 5;
+                movementTimer *= 5;
                 fire(new StableListener.ChangeEvent());
             }
             return false;
@@ -123,37 +122,37 @@ public class Dot extends Actor {
     }
 
 
-    public Actor hit(float x, float y, boolean touchable){
-        if(!this.isVisible() || this.getTouchable() == Touchable.disabled)
+    public Actor hit(float x, float y, boolean touchable) {
+        if (!this.isVisible() || this.getTouchable() == Touchable.disabled)
             return null;
 
-        if (circleBounds.contains(x,y))
+        if (circleBounds.contains(x, y))
             return this;
 
         return null;
     }
 
-
     public boolean isTouched() {
         return touched;
     }
 
-    public void updatePosition(float x, float y){
-        if(getStage() != null) {
+    public void updatePosition(float x, float y) {
+        if (getStage() != null) {
             if (x < 0)
                 x = 0;
             if (x > getStage().getCamera().viewportWidth)
-                x = getStage().getCamera().viewportWidth - (2 * DEFAULTRADIUS);
+                x = getStage().getCamera().viewportWidth - (2 * DEFAULT_RADIUS);
             if (y < 0)
                 y = 0;
             if (y > getStage().getCamera().viewportHeight)
-                y = getStage().getCamera().viewportHeight - (2 * DEFAULTRADIUS);
+                y = getStage().getCamera().viewportHeight - (2 * DEFAULT_RADIUS);
 
         }
         setPosition(x, y);
-        center.set(x + getWidth() / 2, y + getHeight()/2);
+        center.set(x + getWidth() / 2, y + getHeight() / 2);
         pointLight.setPosition(center);
     }
+
     public Relation getRelation1() {
         return relation1;
     }
@@ -172,10 +171,9 @@ public class Dot extends Actor {
 
     public void setTouched(boolean touched) {
         this.touched = touched;
-        if(touched) {
+        if (touched) {
             removeDotAction();
-        }
-        else {
+        } else {
             addDotAction();
         }
     }

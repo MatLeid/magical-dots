@@ -18,7 +18,7 @@ public class DotController {
     private Random random = new Random();
 
     public Array<Dot> createDots(int numberOfDots, RayHandler rayHandler) {
-        Dot.multiplier = 500f;
+        Dot.movementTimer = 500f;
         for (int i = 0; i < numberOfDots; i++) {
             Dot dot = new Dot(rayHandler);
             dots.add(dot);
@@ -44,8 +44,8 @@ public class DotController {
 
     public void setRandomLayout(float width, float height) {
         for (Dot dot : dots) {
-            float x = Dot.DEFAULTRADIUS + random.nextInt((int) (width - 2 * Dot.DEFAULTRADIUS));
-            float y = Dot.DEFAULTRADIUS + random.nextInt((int) (height - 2 * Dot.DEFAULTRADIUS));
+            float x = Dot.DEFAULT_RADIUS + random.nextInt((int) (width - 2 * Dot.DEFAULT_RADIUS));
+            float y = Dot.DEFAULT_RADIUS + random.nextInt((int) (height - 2 * Dot.DEFAULT_RADIUS));
             dot.updatePosition(x, y);
         }
     }
