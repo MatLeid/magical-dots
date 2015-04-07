@@ -114,7 +114,7 @@ public class GameScreen implements Screen {
         lighting.setAmbientLight(MagicalDots.DARKGREY);
 
         // setup dots
-        dots = dotController.createDots(5, lighting);
+        dots = dotController.createDots(5, lighting, hardcoreMode);
         dotController.setRandomRelations();
         dotController.setRandomLayout(camera.viewportWidth, camera.viewportHeight);
         dotController.addAllToStage(stage);
@@ -159,6 +159,8 @@ public class GameScreen implements Screen {
 
         if (game.isFinished()) {
             endingText.addAction(Actions.show());
+            for(Dot dot : dots)
+                dot.clearActions();
         }
     }
 

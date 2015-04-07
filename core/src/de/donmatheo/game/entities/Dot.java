@@ -13,13 +13,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.actions.RepeatAction;
-import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
-
-import java.util.Random;
-
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.removeAction;
 
 
 /**
@@ -27,26 +20,24 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.removeAction;
  */
 public class Dot extends Actor {
 
-    public static int DEFAULTRADIUS = 35;
-    private final PointLight pointLight;
-    private Circle circleBounds;
-    private Relation relation1;
-    private Relation relation2;
-    private boolean touched;
-    private Vector2 center;
+    public static int DEFAULT_RADIUS = 35;
+    protected static Sound getsStableSound = Gdx.audio.newSound(Gdx.files.internal("sound/gets-stable.ogg"));
 
-    private static Sound getsStable = Gdx.audio.newSound(Gdx.files.internal("sound/gets-stable.ogg"));
+    protected final PointLight pointLight;
+    protected Relation relation1;
+    protected Relation relation2;
+    private Circle circleBounds;
+    private Vector2 center;
     private Texture dotImageBlue;
     private Texture dotImageYellow;
-
-    private SequenceAction forever;
+    protected boolean touched;
 
     public Dot(RayHandler rayHandler) {
         pointLight = new PointLight(rayHandler, 200, Color.ORANGE, 250, getX(), getY());
         pointLight.setActive(false);
-        circleBounds = new Circle(DEFAULTRADIUS, DEFAULTRADIUS, DEFAULTRADIUS);
+        circleBounds = new Circle(DEFAULT_RADIUS, DEFAULT_RADIUS, DEFAULT_RADIUS);
         center = new Vector2();
-        setBounds(0, 0, DEFAULTRADIUS * 2, DEFAULTRADIUS * 2);
+        setBounds(0, 0, DEFAULT_RADIUS * 2, DEFAULT_RADIUS * 2);
         setOrigin(0, 0);
         setScale(0.1f);
         setColor(new Color(1f, 1f, 1f, 0f));
@@ -54,30 +45,8 @@ public class Dot extends Actor {
         dotImageYellow = new Texture(Gdx.files.internal("dot_yellow.png"));
         addAction(Actions.fadeIn(1.2f));
         addAction(Actions.scaleTo(1f, 1f, 2f, Interpolation.elasticOut));
-        addDotAction();
-
     }
 
-    private void addDotAction() {
-        forever = sequence(delay(3f), Actions.moveBy(randomFloat(), randomFloat(), 0.8f, Interpolation.bounceOut), run(new Runnable() {
-            public void run () {
-                addDotAction();
-            }
-        }));
-        addAction(forever);
-    }
-
-    private float randomFloat() {
-        int sign = 1;
-        Random rand = new Random();
-        if(rand.nextBoolean())
-            sign = -1;
-        return rand.nextInt(50) * sign;
-    }
-
-    private void removeDotAction(){
-        removeAction(forever);
-    }
 
     @Override
     public void act(float delta) {
@@ -89,73 +58,74 @@ public class Dot extends Actor {
     public void draw(Batch batch, float parentAlpha) {
         batch.setProjectionMatrix(getStage().getCamera().combined);
         batch.setColor(this.getColor());
-        if (hasIsoscelesRelations()) {
-            batch.draw(dotImageYellow, getX(), getY(), 2 * DEFAULTRADIUS * getScaleX(), 2 * DEFAULTRADIUS * getScaleY());
+        if (isStable()) {
+            batch.draw(dotImageYellow, getX(), getY(), 2 * DEFAULT_RADIUS * getScaleX(), 2 * DEFAULT_RADIUS * getScaleY());
         } else {
-            batch.draw(dotImageBlue, getX(), getY(), 2 * DEFAULTRADIUS * getScaleX(), 2 * DEFAULTRADIUS * getScaleY());
+            batch.draw(dotImageBlue, getX(), getY(), 2 * DEFAULT_RADIUS * getScaleX(), 2 * DEFAULT_RADIUS * getScaleY());
         }
     }
 
     public boolean hasIsoscelesRelations() {
         double dist1 = distance(relation1.getTarget());
         double dist2 = distance(relation2.getTarget());
-
         double median = (dist1 + dist2) / 2;
         double absoluteDiff = Math.abs(dist1 - dist2);
         if (absoluteDiff / median < 0.1) {
-            if(!pointLight.isActive()) {
-                getsStable.play();
-                removeDotAction();
+            if (!isStable()) {
+                pointLight.setActive(true);
+                getsStableSound.play();
             }
-            pointLight.setActive(true);
             return true;
         } else {
-            if(pointLight.isActive()) {
+            if (isStable()) {
                 pointLight.setActive(false);
-                addDotAction();
             }
             return false;
         }
     }
 
-    private double distance(Dot neighbour) {
+    public boolean isStable(){
+        return pointLight.isActive();
+    }
+
+    protected double distance(Dot neighbour) {
         double dx = getX() - neighbour.getX();         //horizontal difference
         double dy = getY() - neighbour.getY();         //vertical difference
         return Math.sqrt(dx * dx + dy * dy);           //distance using Pythagoras theorem
     }
 
 
-    public Actor hit(float x, float y, boolean touchable){
-        if(!this.isVisible() || this.getTouchable() == Touchable.disabled)
+    public Actor hit(float x, float y, boolean touchable) {
+        if (!this.isVisible() || this.getTouchable() == Touchable.disabled)
             return null;
 
-        if (circleBounds.contains(x,y))
+        if (circleBounds.contains(x, y))
             return this;
 
         return null;
     }
 
-
     public boolean isTouched() {
         return touched;
     }
 
-    public void updatePosition(float x, float y){
-        if(getStage() != null) {
+    public void updatePosition(float x, float y) {
+        if (getStage() != null) {
             if (x < 0)
                 x = 0;
             if (x > getStage().getCamera().viewportWidth)
-                x = getStage().getCamera().viewportWidth - (2 * DEFAULTRADIUS);
+                x = getStage().getCamera().viewportWidth - (2 * DEFAULT_RADIUS);
             if (y < 0)
                 y = 0;
             if (y > getStage().getCamera().viewportHeight)
-                y = getStage().getCamera().viewportHeight - (2 * DEFAULTRADIUS);
+                y = getStage().getCamera().viewportHeight - (2 * DEFAULT_RADIUS);
 
         }
         setPosition(x, y);
-        center.set(x + getWidth() / 2, y + getHeight()/2);
+        center.set(x + getWidth() / 2, y + getHeight() / 2);
         pointLight.setPosition(center);
     }
+
     public Relation getRelation1() {
         return relation1;
     }
@@ -173,10 +143,6 @@ public class Dot extends Actor {
     }
 
     public void setTouched(boolean touched) {
-        if(touched)
-            removeDotAction();
-        else
-            addDotAction();
         this.touched = touched;
     }
 
