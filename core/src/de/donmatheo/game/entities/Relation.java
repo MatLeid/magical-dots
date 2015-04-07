@@ -17,7 +17,6 @@ public class Relation extends Actor {
     private Dot source, target;
     Array<Vector2> points;
     private float scaleValue;
-    private float scaleSlope;
 
     public Relation(Dot source, Dot target) {
         this.source = source;
@@ -60,14 +59,12 @@ public class Relation extends Actor {
             Vector2 temp = new Vector2(x,y);
             Vector2 last = points.get(points.size-1);
 
-            if (distance(last, temp) > 20) {
-                points.add(new Vector2(x, y));
+            if (distance(last, temp) > 25) {
+                points.add(temp);
             }
             x+=0.01;
-        }
 
-        //calculate new scale slope
-        scaleSlope = (20 - 5 ) / points.size;
+        }
 
     }
 
@@ -76,15 +73,20 @@ public class Relation extends Actor {
         batch.setProjectionMatrix(getStage().getCamera().combined);
         batch.setColor(this.getColor());
 
-        for (int i = 0; i<points.size; i++) {
+        for (int i = 2; i<points.size-2; i++) {
             Vector2 point = points.get(i);
-            scaleValue = (scaleSlope * i) + 5;
-            System.out.println(scaleValue);
+
+            scaleValue = (1-((float)distance(source.getCenter(),point) / (float)distance(source.getCenter(), target.getCenter()))) *20 ;
+
+            if (scaleValue < 5) {
+                scaleValue = 5;
+            }
+
             if (source.hasIsoscelesRelations()) {
-                batch.draw(dotImageYellow, point.x, point.y, scaleValue * getScaleX(), scaleValue * getScaleY());
+                batch.draw(dotImageYellow, point.x - (scaleValue/2), point.y -(scaleValue/2), scaleValue * getScaleX(), scaleValue * getScaleY());
             }
             if (source.isTouched() && !source.hasIsoscelesRelations()){
-                batch.draw(dotImageBlue, point.x, point.y, scaleValue * getScaleX(), scaleValue * getScaleY());
+                batch.draw(dotImageBlue, point.x - (scaleValue/2), point.y - (scaleValue/2), scaleValue * getScaleX(), scaleValue * getScaleY());
             }
         }
     }
