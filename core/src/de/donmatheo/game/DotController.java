@@ -51,6 +51,10 @@ public class DotController {
             float y = Dot.DEFAULT_RADIUS + random.nextInt((int) (height - 2 * Dot.DEFAULT_RADIUS));
             dot.updatePosition(x, y);
         }
+
+        for (Dot dot : dots)
+            if (dot.hasIsoscelesRelations())
+                setRandomLayout(width, height);
     }
 
     public void addAllToStage(Stage stage) {
