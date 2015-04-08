@@ -68,6 +68,7 @@ public class MainMenuScreen implements Screen {
                 } else if (touched instanceof PlayHardcoreButton) {
                         touched.addAction(Actions.sequence(Actions.scaleTo(0.98f, 0.98f, 0.1f),Actions.scaleTo(1f, 1f, 0.5f, Interpolation.elasticOut), run(new Runnable() {
                             public void run() {
+                                Gdx.audio.newMusic(Gdx.files.internal("sound/play-hardcore.mp3")).play();
                                 game.setScreen(new GameScreen(game, true));
                                 dispose();
                             }
