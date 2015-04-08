@@ -66,11 +66,7 @@ public class Dot extends Actor {
     }
 
     public boolean hasIsoscelesRelations() {
-        double dist1 = distance(relation1.getTarget());
-        double dist2 = distance(relation2.getTarget());
-        double median = (dist1 + dist2) / 2;
-        double absoluteDiff = Math.abs(dist1 - dist2);
-        if (absoluteDiff / median < 0.1) {
+        if (calculateIsoscelesRelations()) {
             if (!isStable()) {
                 pointLight.setActive(true);
                 getsStableSound.play();
@@ -82,6 +78,14 @@ public class Dot extends Actor {
             }
             return false;
         }
+    }
+
+    protected boolean calculateIsoscelesRelations(){
+        double dist1 = distance(relation1.getTarget());
+        double dist2 = distance(relation2.getTarget());
+        double median = (dist1 + dist2) / 2;
+        double absoluteDiff = Math.abs(dist1 - dist2);
+        return absoluteDiff / median < 0.1;
     }
 
     public boolean isStable(){

@@ -25,7 +25,8 @@ public class HardcoreDot extends Dot {
 
     public void addDotAction() {
         if (!isTouched() && !isStable()) {
-            forever = sequence(delay(movementTimer), Actions.moveBy(randomFloat(), randomFloat(), 0.8f, Interpolation.bounceOut), run(new Runnable() {
+            forever = sequence(delay(movementTimer), Actions.moveBy(randomFloat(), randomFloat(), 0.8f,
+                    Interpolation.bounceOut), run(new Runnable() {
                 public void run() {
                     addDotAction();
                 }
@@ -47,11 +48,7 @@ public class HardcoreDot extends Dot {
     }
 
     public boolean hasIsoscelesRelations() {
-        double dist1 = distance(relation1.getTarget());
-        double dist2 = distance(relation2.getTarget());
-        double median = (dist1 + dist2) / 2;
-        double absoluteDiff = Math.abs(dist1 - dist2);
-        if (absoluteDiff / median < 0.1) {
+        if (calculateIsoscelesRelations()) {
             if (!isStable()) {
                 pointLight.setActive(true);
                 movementTimer /= 5;
