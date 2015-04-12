@@ -1,7 +1,6 @@
 package de.donmatheo.game;
 
 import box2dLight.RayHandler;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Array;
 import de.donmatheo.game.entities.Dot;
@@ -23,9 +22,6 @@ public class DotController {
             Dot dot = hardcore == true ? new HardcoreDot(rayHandler) : new Dot(rayHandler);
             dots.add(dot);
         }
-        if(hardcore)
-            setMovementListener();
-
         return dots;
     }
 
@@ -68,21 +64,7 @@ public class DotController {
             stage.addActor(dot);
     }
 
-    private void setMovementListener (){
-        HardcoreDot.movementTimer = 500;
-        for (Dot dot : dots) {
-            dot.addListener(new StableListener() {
-                @Override
-                public void changed(ChangeEvent event, Actor actor) {
-                    // Timer changes depending on the count of stable relations, so they have to be updated as soon as
-                    // a relation gets stable
-                    for (int i = 0; i < dots.size; i++) {
-                        HardcoreDot dot = (HardcoreDot) dots.get(i);
-                        dot.removeDotAction();
-                        dot.addDotAction();
-                    }
-                }
-            });
-        }
+    public void resetHardcoreAction() {
+        HardcoreDot.delay.setDuration(HardcoreDot.movementTimer = 500f);
     }
 }

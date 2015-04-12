@@ -3,8 +3,8 @@ package de.donmatheo.game.entities;
 import box2dLight.RayHandler;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.DelayAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
-import de.donmatheo.game.StableListener;
 
 import java.util.Random;
 
@@ -16,6 +16,8 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.*;
 public class HardcoreDot extends Dot {
 
     public static float movementTimer = 500f;
+    public static DelayAction delay = new DelayAction(movementTimer);
+
     private SequenceAction forever;
 
     public HardcoreDot(RayHandler rayHandler) {
@@ -25,7 +27,7 @@ public class HardcoreDot extends Dot {
 
     public void addDotAction() {
         if (!isTouched() && !isStable()) {
-            forever = sequence(delay(movementTimer), Actions.moveBy(randomFloat(), randomFloat(), 0.8f,
+            forever = sequence(delay, Actions.moveBy(randomFloat(), randomFloat(), 0.8f,
                     Interpolation.bounceOut), run(new Runnable() {
                 public void run() {
                     addDotAction();
@@ -40,27 +42,25 @@ public class HardcoreDot extends Dot {
     }
 
     private float randomFloat() {
-        int sign = 1;
         Random rand = new Random();
-        if (rand.nextBoolean())
-            sign = -1;
-        return rand.nextInt(50) * sign;
+        int sign = rand.nextBoolean() ? 1 : -1;
+        return rand.nextInt(40) + 10 * sign;
     }
 
     public boolean hasIsoscelesRelations() {
         if (calculateIsoscelesRelations()) {
             if (!isStable()) {
                 pointLight.setActive(true);
-                movementTimer /= 5;
-                fire(new StableListener.ChangeEvent());
+                delay.setDuration(movementTimer /= 5);
+                removeDotAction();
                 getsStableSound.play();
             }
             return true;
         } else {
             if (isStable()) {
                 pointLight.setActive(false);
-                movementTimer *= 5;
-                fire(new StableListener.ChangeEvent());
+                delay.setDuration(movementTimer *= 5);
+                addDotAction();
             }
             return false;
         }
@@ -74,5 +74,4 @@ public class HardcoreDot extends Dot {
             addDotAction();
         }
     }
-
 }

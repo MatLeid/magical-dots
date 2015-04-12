@@ -26,11 +26,11 @@ public class Dot extends Actor {
     protected final PointLight pointLight;
     protected Relation relation1;
     protected Relation relation2;
+    protected boolean touched;
     private Circle circleBounds;
     private Vector2 center;
     private Texture dotImageBlue;
     private Texture dotImageYellow;
-    protected boolean touched;
 
     public Dot(RayHandler rayHandler) {
         pointLight = new PointLight(rayHandler, 200, Color.ORANGE, 250, getX(), getY());
@@ -80,7 +80,7 @@ public class Dot extends Actor {
         }
     }
 
-    protected boolean calculateIsoscelesRelations(){
+    protected boolean calculateIsoscelesRelations() {
         double dist1 = distance(relation1.getTarget());
         double dist2 = distance(relation2.getTarget());
         double median = (dist1 + dist2) / 2;
@@ -88,7 +88,7 @@ public class Dot extends Actor {
         return absoluteDiff / median < 0.1;
     }
 
-    public boolean isStable(){
+    public boolean isStable() {
         return pointLight.isActive();
     }
 
@@ -111,6 +111,10 @@ public class Dot extends Actor {
 
     public boolean isTouched() {
         return touched;
+    }
+
+    public void setTouched(boolean touched) {
+        this.touched = touched;
     }
 
     public void updatePosition(float x, float y) {
@@ -144,10 +148,6 @@ public class Dot extends Actor {
 
     public void setRelation2(Relation relation2) {
         this.relation2 = relation2;
-    }
-
-    public void setTouched(boolean touched) {
-        this.touched = touched;
     }
 
     public Vector2 getCenter() {
