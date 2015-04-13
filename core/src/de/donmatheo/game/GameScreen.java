@@ -15,11 +15,11 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import de.donmatheo.game.entities.Dot;
 import de.donmatheo.game.input.MyGestureHandler;
 import de.donmatheo.game.input.MyInputProcessor;
-import de.donmatheo.game.ui.EndingText;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -27,7 +27,7 @@ import java.util.Random;
 public class GameScreen implements Screen {
 
     private final MagicalDots game;
-    private final EndingText endingText;
+
     private final FitViewport viewport;
 
     private OrthographicCamera camera;
@@ -72,37 +72,24 @@ public class GameScreen implements Screen {
         stage.addListener(new InputListener() {
 
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                if (!game.isFinished()) {
-                    touchedDot = (Dot) stage.hit(event.getStageX(), event.getStageY(), true);
-                    if (touchedDot != null) {
-                        touchedDot.setTouched(true);
-                        offsetX = x - touchedDot.getX();
-                        offsetY = y - touchedDot.getY();
-                    }
+                touchedDot = (Dot) stage.hit(event.getStageX(), event.getStageY(), true);
+                if (touchedDot != null) {
+                    touchedDot.setTouched(true);
+                    offsetX = x - touchedDot.getX();
+                    offsetY = y - touchedDot.getY();
                 }
-
                 return true;
             }
 
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (game.isFinished()) {
-                    game.setFinished(false);
-                    game.setScreen(new MainMenuScreen(game));
-                    dispose();
-                }
-
-                if (!game.isFinished()) {
-                    if (touchedDot != null)
-                        touchedDot.setTouched(false);
-                }
+                if (touchedDot != null)
+                    touchedDot.setTouched(false);
             }
 
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                if (!game.isFinished()) {
-                    // move dot when touched
-                    if (touchedDot != null) {
-                        touchedDot.updatePosition(event.getStageX() - offsetX, event.getStageY() - offsetY);
-                    }
+                // move dot when touched
+                if (touchedDot != null) {
+                    touchedDot.updatePosition(event.getStageX() - offsetX, event.getStageY() - offsetY);
                 }
             }
         });
@@ -118,11 +105,6 @@ public class GameScreen implements Screen {
         dotController.setRandomRelations();
         dotController.setRandomLayout(camera.viewportWidth, camera.viewportHeight);
         dotController.addAllToStage(stage);
-
-        // setup Ending screen actor
-        endingText = new EndingText(camera);
-        stage.addActor(endingText);
-        endingText.addAction(Actions.hide());
 
     }
 
@@ -140,38 +122,39 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         if (!game.isFinished()) {
             checkWinCondition();
+
+            // set zoom and update camera
+            camera.zoom = zoom;
+            camera.update();
+
+            // render background
+            Gdx.gl.glClearColor(0, 0, 0, 1);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+            // render lights
+            lighting.setCombinedMatrix(camera.combined);
+            lighting.updateAndRender();
+
+            // render dots
+            stage.act(delta);
+            stage.draw();
         }
-        // set zoom and update camera
-        camera.zoom = zoom;
-        camera.update();
-
-        // render background
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        // render lights
-        lighting.setCombinedMatrix(camera.combined);
-        lighting.updateAndRender();
-
-        // render dots
-        stage.act(delta);
-        stage.draw();
-
         if (game.isFinished()) {
-            endingText.addAction(Actions.show());
             dotController.resetHardcoreAction();
+            game.setScreen(new EndingScreen(game, ScreenUtils.getFrameBufferTexture()));
+            dispose();
         }
     }
 
     private void checkWinCondition() {
         boolean allIsolescent = true;
         for (Dot dot : dots) {
-          if (!dot.hasIsoscelesRelations()) {
-            allIsolescent = false;
-          }
+            if (!dot.hasIsoscelesRelations()) {
+                allIsolescent = false;
+            }
         }
-       if (allIsolescent)
-           game.setFinished(true);
+        if (allIsolescent)
+            game.setFinished(true);
 
     }
 

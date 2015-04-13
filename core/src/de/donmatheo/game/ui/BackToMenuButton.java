@@ -20,8 +20,8 @@ public class BackToMenuButton extends Actor {
     public BackToMenuButton(OrthographicCamera camera) {
         this.camera = camera;
 
-        buttonImageWXGA = new Texture(Gdx.files.internal("button_normal_WXGA.png"));
-        buttonImageWVGA = new Texture(Gdx.files.internal("button_normal_WVGA.png"));
+        buttonImageWXGA = new Texture(Gdx.files.internal("button_backtomenu_WXGA.png"));
+        buttonImageWVGA = new Texture(Gdx.files.internal("button_backtomenu_WVGA.png"));
 
         calculatePosition(camera.viewportWidth, camera.viewportHeight);
 
@@ -31,7 +31,7 @@ public class BackToMenuButton extends Actor {
 
     public void calculatePosition(float viewportWidth, float viewportHeight) {
         float xMiddle = viewportWidth/2;
-        float yLowerThird = viewportHeight / 3;
+        float yLowerQuarter = viewportHeight / 4;
         float imageWidth = buttonImageWVGA.getWidth();
         float imageHeight = buttonImageWVGA.getHeight();
 
@@ -39,7 +39,7 @@ public class BackToMenuButton extends Actor {
             imageWidth = buttonImageWXGA.getWidth();
             imageHeight = buttonImageWXGA.getHeight();
         }
-        setPosition(xMiddle - imageWidth * .5f, yLowerThird-imageHeight);
+        setPosition(xMiddle - imageWidth * .5f, yLowerQuarter-imageHeight);
         setBounds(getX(), getY(), imageWidth, imageHeight);
     }
 
