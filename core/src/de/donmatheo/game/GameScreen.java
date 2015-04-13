@@ -94,6 +94,7 @@ public class GameScreen implements Screen {
             }
 
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
+                Actor touched = stage.hit(event.getStageX(), event.getStageY(), true);
                 if (!game.isFinished()) {
                     if (touchedDot != null) {
                         touchedDot.setTouched(false);
@@ -101,7 +102,6 @@ public class GameScreen implements Screen {
                     }
                 }
                 if (game.isFinished()) {
-                    Actor touched = stage.hit(event.getStageX(), event.getStageY(), true);
                     if (touched instanceof BackToMenuButton) {
                         touched.addAction(Actions.sequence(Actions.scaleTo(0.98f, 0.98f, 0.1f), Actions.scaleTo(1f, 1f, 0.5f, Interpolation.elasticOut), run(new Runnable() {
                             public void run() {

@@ -16,11 +16,6 @@ public class BackToMenuButton extends Actor {
     private final Texture buttonImageWVGA;
     private final Texture buttonImageWXGA;
     OrthographicCamera camera;
-    private float screenWidth;
-    private float screenHeight;
-    private float x;
-    private float y;
-
 
     public BackToMenuButton(OrthographicCamera camera) {
         this.camera = camera;
@@ -45,25 +40,24 @@ public class BackToMenuButton extends Actor {
             imageHeight = buttonImageWXGA.getHeight();
         }
         setPosition(xMiddle - imageWidth * .5f, yLowerQuarter-imageHeight);
-        setBounds(getX(), getY(), imageWidth, imageHeight);
+        float screenX = camera.unproject(new Vector3(getX(),getY(),0)).x;
+        float screenY = camera.unproject(new Vector3(getX(),viewportHeight-getY(),0)).y;
+        setBounds(screenX, screenY, imageWidth *camera.zoom, imageHeight*camera.zoom);
     }
 
     @Override
     public void act(float delta) {
         super.act(delta);
         setScale(this.getScaleX(), this.getScaleY());
-        screenWidth = Gdx.graphics.getWidth();
-        screenHeight = Gdx.graphics.getHeight();
-        x = camera.unproject(new Vector3(getX(),getY(),0)).x;
-        y = camera.unproject(new Vector3(getX(),screenHeight-getY(),0)).y;
+        calculatePosition(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
     }
 
     public void draw(Batch batch, float parentAlpha) {
         batch.setColor(this.getColor());
         if (camera.viewportWidth < 1280)
-            batch.draw(buttonImageWVGA, x, y, buttonImageWVGA.getWidth()*getScaleX()*camera.zoom, buttonImageWVGA.getHeight()*getScaleY()*camera.zoom);
+            batch.draw(buttonImageWVGA, getX(), getY(), buttonImageWVGA.getWidth()*getScaleX()*camera.zoom, buttonImageWVGA.getHeight()*getScaleY()*camera.zoom);
         else
-            batch.draw(buttonImageWXGA, x, y, buttonImageWXGA.getWidth()*getScaleX()*camera.zoom, buttonImageWXGA.getHeight()*getScaleY()*camera.zoom);
+            batch.draw(buttonImageWXGA, getX(), getY(), buttonImageWXGA.getWidth()*getScaleX()*camera.zoom, buttonImageWXGA.getHeight()*getScaleY()*camera.zoom);
     }
 
 
