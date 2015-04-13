@@ -179,7 +179,7 @@ public class GameScreen implements Screen {
         boolean allIsolescent = true;
         for (Dot dot : dots) {
             if (!dot.hasIsoscelesRelations()) {
-                //allIsolescent = false;
+                allIsolescent = false;
             }
         }
         if (allIsolescent) {
