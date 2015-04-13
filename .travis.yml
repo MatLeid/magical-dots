@@ -15,6 +15,9 @@ before_install:
 
 script:
     - ./gradlew html:dist --stacktrace
+    - ./gradlew android:assembleRelease
+    - ./gradlew desktop:dist
+
 
 after_failure:
     - cd ..
