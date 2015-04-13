@@ -5,29 +5,37 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.input.GestureDetector;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import de.donmatheo.game.entities.Dot;
 import de.donmatheo.game.input.MyGestureHandler;
 import de.donmatheo.game.input.MyInputProcessor;
+import de.donmatheo.game.ui.BackToMenuButton;
+import de.donmatheo.game.ui.EndingText;
 
 import java.util.ArrayList;
 import java.util.Random;
 
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
+
 public class GameScreen implements Screen {
 
     private final MagicalDots game;
-
+    private final EndingText endingText;
     private final FitViewport viewport;
+    private final BackToMenuButton backToMenuButton;
 
     private OrthographicCamera camera;
 
@@ -71,24 +79,45 @@ public class GameScreen implements Screen {
         stage.addListener(new InputListener() {
 
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                touchedDot = (Dot) stage.hit(event.getStageX(), event.getStageY(), true);
-                if (touchedDot != null) {
-                    touchedDot.setTouched(true);
-                    offsetX = x - touchedDot.getX();
-                    offsetY = y - touchedDot.getY();
+                if (!game.isFinished()) {
+                    Actor touched = stage.hit(event.getStageX(), event.getStageY(), true);
+                    if (touched instanceof Dot) {
+                        touchedDot = (Dot) stage.hit(event.getStageX(), event.getStageY(), true);
+                        if (touchedDot != null) {
+                            touchedDot.setTouched(true);
+                            offsetX = x - touchedDot.getX();
+                            offsetY = y - touchedDot.getY();
+                        }
+                    }
                 }
                 return true;
             }
 
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                if (touchedDot != null)
-                    touchedDot.setTouched(false);
+                if (!game.isFinished()) {
+                    if (touchedDot != null)
+                        touchedDot.setTouched(false);
+                }
+                if (game.isFinished()) {
+                    Actor touched = stage.hit(event.getStageX(), event.getStageY(), true);
+                    if (touched instanceof BackToMenuButton) {
+                        touched.addAction(Actions.sequence(Actions.scaleTo(0.98f, 0.98f, 0.1f), Actions.scaleTo(1f, 1f, 0.5f, Interpolation.elasticOut), run(new Runnable() {
+                            public void run() {
+                                game.setFinished(false);
+                                game.setScreen(new MainMenuScreen(game));
+                                dispose();
+                            }
+                        })));
+                    }
+                }
             }
 
             public void touchDragged(InputEvent event, float x, float y, int pointer) {
-                // move dot when touched
-                if (touchedDot != null) {
-                    touchedDot.updatePosition(event.getStageX() - offsetX, event.getStageY() - offsetY);
+                if (!game.isFinished()) {
+                    // move dot when touched
+                    if (touchedDot != null) {
+                        touchedDot.updatePosition(event.getStageX() - offsetX, event.getStageY() - offsetY);
+                    }
                 }
             }
         });
@@ -105,6 +134,13 @@ public class GameScreen implements Screen {
         dotController.setRandomLayout(camera.viewportWidth, camera.viewportHeight);
         dotController.addAllToStage(stage);
 
+        // setup UI Elements
+        endingText = new EndingText(camera);
+        backToMenuButton = new BackToMenuButton(camera);
+        stage.addActor(endingText);
+        stage.addActor(backToMenuButton);
+        endingText.setVisible(false);
+        backToMenuButton.setVisible(false);
     }
 
     public void initaliseInputProcessors() {
@@ -121,40 +157,47 @@ public class GameScreen implements Screen {
     public void render(float delta) {
         if (!game.isFinished()) {
             checkWinCondition();
-
-            // set zoom and update camera
-            camera.zoom = zoom;
-            camera.update();
-
-            // render background
-            Gdx.gl.glClearColor(0, 0, 0, 1);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-            // render lights
-            lighting.setCombinedMatrix(camera.combined);
-            lighting.updateAndRender();
-
-            // render dots
-            stage.act(delta);
-            stage.draw();
         }
-        if (game.isFinished()) {
-            dotController.resetHardcoreAction();
-            game.setScreen(new EndingScreen(game, ScreenUtils.getFrameBufferTexture()));
-            dispose();
-        }
+        // set zoom and update camera
+        camera.zoom = zoom;
+        camera.update();
+
+        // render background
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        // render lights
+        lighting.setCombinedMatrix(camera.combined);
+        lighting.updateAndRender();
+
+        // render actors (dots and ui elements)
+        stage.act(delta);
+        stage.draw();
     }
 
     private void checkWinCondition() {
         boolean allIsolescent = true;
         for (Dot dot : dots) {
             if (!dot.hasIsoscelesRelations()) {
-                allIsolescent = false;
+                //allIsolescent = false;
             }
         }
-        if (allIsolescent)
+        if (allIsolescent) {
             game.setFinished(true);
+            dotController.resetHardcoreAction();
 
+            stage.addAction(Actions.sequence(Actions.delay(3f, Actions.run(new Runnable() {
+                @Override
+                public void run() {
+                    endingText.setVisible(true);
+                    endingText.setColor(new Color(1,1,1,0));
+                    endingText.addAction(Actions.fadeIn(.5f));
+                    backToMenuButton.setVisible(true);
+                    backToMenuButton.setColor(new Color(1, 1, 1, 0));
+                    backToMenuButton.addAction(Actions.sequence(Actions.delay(2f),Actions.fadeIn(.5f)));
+                }
+            }))));
+        }
     }
 
     @Override

@@ -23,6 +23,7 @@ public class EndingText extends Actor {
     }
 
     public void draw(Batch batch, float parentAlpha) {
+        batch.setColor(this.getColor());
         if (camera.viewportWidth < 1280)
             batch.draw(endingImageWVGA, getX(), getY(), camera.viewportWidth, camera.viewportHeight);
         else
