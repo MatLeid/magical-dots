@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 
@@ -15,6 +16,10 @@ public class BackToMenuButton extends Actor {
     private final Texture buttonImageWVGA;
     private final Texture buttonImageWXGA;
     OrthographicCamera camera;
+    private float screenWidth;
+    private float screenHeight;
+    private float x;
+    private float y;
 
 
     public BackToMenuButton(OrthographicCamera camera) {
@@ -47,14 +52,18 @@ public class BackToMenuButton extends Actor {
     public void act(float delta) {
         super.act(delta);
         setScale(this.getScaleX(), this.getScaleY());
+        screenWidth = Gdx.graphics.getWidth();
+        screenHeight = Gdx.graphics.getHeight();
+        x = camera.unproject(new Vector3(getX(),getY(),0)).x;
+        y = camera.unproject(new Vector3(getX(),screenHeight-getY(),0)).y;
     }
 
     public void draw(Batch batch, float parentAlpha) {
         batch.setColor(this.getColor());
         if (camera.viewportWidth < 1280)
-            batch.draw(buttonImageWVGA, getX(), getY(), buttonImageWVGA.getWidth()*getScaleX(), buttonImageWVGA.getHeight()*getScaleY());
+            batch.draw(buttonImageWVGA, x, y, buttonImageWVGA.getWidth()*getScaleX()*camera.zoom, buttonImageWVGA.getHeight()*getScaleY()*camera.zoom);
         else
-            batch.draw(buttonImageWXGA, getX(), getY(), buttonImageWXGA.getWidth()*getScaleX(), buttonImageWXGA.getHeight()*getScaleY());
+            batch.draw(buttonImageWXGA, x, y, buttonImageWXGA.getWidth()*getScaleX()*camera.zoom, buttonImageWXGA.getHeight()*getScaleY()*camera.zoom);
     }
 
 
