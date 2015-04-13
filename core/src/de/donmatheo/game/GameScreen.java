@@ -95,8 +95,10 @@ public class GameScreen implements Screen {
 
             public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
                 if (!game.isFinished()) {
-                    if (touchedDot != null)
+                    if (touchedDot != null) {
                         touchedDot.setTouched(false);
+                        touchedDot = null;
+                    }
                 }
                 if (game.isFinished()) {
                     Actor touched = stage.hit(event.getStageX(), event.getStageY(), true);
@@ -190,11 +192,11 @@ public class GameScreen implements Screen {
                 @Override
                 public void run() {
                     endingText.setVisible(true);
-                    endingText.setColor(new Color(1,1,1,0));
+                    endingText.setColor(new Color(1, 1, 1, 0));
                     endingText.addAction(Actions.fadeIn(.5f));
                     backToMenuButton.setVisible(true);
                     backToMenuButton.setColor(new Color(1, 1, 1, 0));
-                    backToMenuButton.addAction(Actions.sequence(Actions.delay(2f),Actions.fadeIn(.5f)));
+                    backToMenuButton.addAction(Actions.sequence(Actions.delay(2f), Actions.fadeIn(.5f)));
                 }
             }))));
         }
