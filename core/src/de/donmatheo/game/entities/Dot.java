@@ -118,17 +118,15 @@ public class Dot extends Actor {
     }
 
     public void updatePosition(float x, float y) {
-        if (getStage() != null) {
-            if (x < 0)
-                x = 0;
-            if (x > getStage().getCamera().viewportWidth)
-                x = getStage().getCamera().viewportWidth - (2 * DEFAULT_RADIUS);
-            if (y < 0)
-                y = 0;
-            if (y > getStage().getCamera().viewportHeight)
-                y = getStage().getCamera().viewportHeight - (2 * DEFAULT_RADIUS);
+        if (x<-800)
+            x =-800;
+        if (x > 1600 - 2*DEFAULT_RADIUS)
+            x=1600 - 2*DEFAULT_RADIUS;
+        if (y < -480)
+            y = -480;
+        if (y > 890)
+            y = 890;
 
-        }
         setPosition(x, y);
         center.set(x + getWidth() / 2, y + getHeight() / 2);
         pointLight.setPosition(center);
