@@ -16,19 +16,17 @@ public class EndingText extends Actor {
     private final Texture endingImageWVGA;
 
 
-    public EndingText( OrthographicCamera camera) {
+    public EndingText(OrthographicCamera camera) {
         this.camera = camera;
         endingImageWXGA = new Texture(Gdx.files.internal("background_ending_WXGA.png"));
         endingImageWVGA = new Texture(Gdx.files.internal("background_ending_WVGA.png"));
-
     }
 
     public void draw(Batch batch, float parentAlpha) {
-        if (camera.viewportWidth<1280)
+        if (camera.viewportWidth < 1280)
             batch.draw(endingImageWVGA, getX(), getY(), camera.viewportWidth, camera.viewportHeight);
         else
             batch.draw(endingImageWXGA, getX(), getY(), camera.viewportWidth, camera.viewportHeight);
-
     }
 
 }
