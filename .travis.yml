@@ -33,7 +33,7 @@ after_success:
     - mv $TRAVIS_BRANCH archive/$((TRAVIS_BUILD_NUMBER - 1))
     - cp -r ../unstable-relations/html/build/dist/ $TRAVIS_BRANCH
     - echo "$((TRAVIS_BUILD_NUMBER))" >> $TRAVIS_BRANCH/version.txt
-    - cp -r ../unstable-relations/desktop/build/libs/ release/
+    - cp -r ../unstable-relations/desktop/build/libs/magical-dots-1.0.jar release/
     - cp -r ../unstable-relations/android/build/outputs/apk/android-release-unsigned.apk release/magical-dots-unsigned.apk
     - git add $TRAVIS_BRANCH
     - git add archive
