@@ -6,10 +6,11 @@ canvas {
 body {
     background-color: #FF971E;
     color: #FFFABA;
+    font-family: sans-serif;
 
 }
 div#embed-html {
-    background-color: #FF1E99;
+    background-color: #202020;
     width: 800px;
     height: 480px;
     margin:0 auto;
