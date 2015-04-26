@@ -21,20 +21,20 @@ script:
 
 after_failure:
     - cd ..
-    - git clone -b gh-pages --single-branch https://github.com/donmatheo/unstable-relations.git gh-pages
+    - git clone -b gh-pages --single-branch https://github.com/donmatheo/magical-dots.git gh-pages
     - cd gh-pages
-    - cp -r ../unstable-relations/core/build/reports/tests/ tests
+    - cp -r ../magical-dots/core/build/reports/tests/ tests
     - git add tests
 
 after_success:
     - cd ..
-    - git clone -b gh-pages --single-branch https://github.com/donmatheo/unstable-relations.git gh-pages
+    - git clone -b gh-pages --single-branch https://github.com/donmatheo/magical-dots.git gh-pages
     - cd gh-pages
     - mv $TRAVIS_BRANCH archive/$((TRAVIS_BUILD_NUMBER - 1))
-    - cp -r ../unstable-relations/html/build/dist/ $TRAVIS_BRANCH
+    - cp -r ../magical-dots/html/build/dist/ $TRAVIS_BRANCH
     - echo "$((TRAVIS_BUILD_NUMBER))" >> $TRAVIS_BRANCH/version.txt
-    - cp -r ../unstable-relations/desktop/build/libs/magical-dots-1.0.jar release/
-    - cp -r ../unstable-relations/android/build/outputs/apk/android-release-unsigned.apk release/magical-dots-unsigned.apk
+    - cp -r ../magical-dots/desktop/build/libs/magical-dots-1.0.jar release/
+    - cp -r ../magical-dots/android/build/outputs/apk/android-release-unsigned.apk release/magical-dots-unsigned.apk
     - git add $TRAVIS_BRANCH
     - git add archive
     - git add release
@@ -42,4 +42,4 @@ after_success:
 after_script:
     - git commit -a -m "Committed by Travis-CI (build number - $((TRAVIS_BUILD_NUMBER)))"
     - git pull
-    - git push -q https://$token@github.com/donmatheo/unstable-relations.git HEAD:gh-pages
+    - git push -q https://$token@github.com/donmatheo/magical-dots.git HEAD:gh-pages
