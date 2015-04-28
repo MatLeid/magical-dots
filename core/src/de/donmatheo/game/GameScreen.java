@@ -214,9 +214,8 @@ public class GameScreen implements Screen {
 
     private void initialiseMusic() {
         songs = new ArrayList<Music>();
-        songs.add(Gdx.audio.newMusic(Gdx.files.internal("music/game-01.mp3")));
-        songs.add(Gdx.audio.newMusic(Gdx.files.internal("music/game-02.mp3")));
-        songs.add(Gdx.audio.newMusic(Gdx.files.internal("music/game-03.mp3")));
+        songs.add(Gdx.audio.newMusic(Gdx.files.internal("music/Anima_-_02_-_The_Beating_Sun.mp3")));
+        songs.add(Gdx.audio.newMusic(Gdx.files.internal("music/Anima_-_05_-_The_Waning_Moon.mp3")));
         shuffleSongs();
         for (Music m : songs) {
             m.setOnCompletionListener(new Music.OnCompletionListener() {

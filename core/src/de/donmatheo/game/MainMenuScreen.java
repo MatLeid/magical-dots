@@ -32,7 +32,7 @@ public class MainMenuScreen implements Screen {
     private FitViewport viewport;
 
     public MainMenuScreen(final MagicalDots game) {
-        music = Gdx.audio.newMusic(Gdx.files.internal("music/start-screen.mp3"));
+        music = Gdx.audio.newMusic(Gdx.files.internal("music/Anima_-_03_-_Gli_Spiriti.mp3"));
 
         this.game = game;
         camera = new OrthographicCamera();
