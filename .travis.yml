@@ -21,14 +21,14 @@ script:
 
 after_failure:
     - cd ..
-    - git clone -b gh-pages --single-branch https://github.com/donmatheo/magical-dots.git gh-pages
+    - git clone -b gh-pages --single-branch https://github.com/matleid/magical-dots.git gh-pages
     - cd gh-pages
     - cp -r ../magical-dots/core/build/reports/tests/ tests
     - git add tests
 
 after_success:
     - cd ..
-    - git clone -b gh-pages --single-branch https://github.com/donmatheo/magical-dots.git gh-pages
+    - git clone -b gh-pages --single-branch https://github.com/matleid/magical-dots.git gh-pages
     - cd gh-pages
     - mv $TRAVIS_BRANCH archive/$((TRAVIS_BUILD_NUMBER - 1))
     - cp -r ../magical-dots/html/build/dist/ $TRAVIS_BRANCH
@@ -42,4 +42,4 @@ after_success:
 after_script:
     - git commit -a -m "Committed by Travis-CI (build number - $((TRAVIS_BUILD_NUMBER)))"
     - git pull
-    - git push -q https://$token@github.com/donmatheo/magical-dots.git HEAD:gh-pages
+    - git push -q https://$token@github.com/matleid/magical-dots.git HEAD:gh-pages
